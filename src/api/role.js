@@ -9,7 +9,7 @@ export function getRoutes() {
 
 export function getRoles() {
   return request({
-    url: '/vue-element-admin/roles',
+    url: '/auth/roles',
     method: 'get'
   })
 }

@@ -61,6 +61,7 @@ const actions = {
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
+        
 
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)

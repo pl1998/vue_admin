@@ -30,12 +30,12 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
+    // port: port,
+    // open: true,
+    // overlay: {
+    //   warnings: false,
+    //   errors: true
+    // },
     proxy: {
 			'/api': {
         target: process.env.VUE_APP_HOST + '/api',
@@ -47,7 +47,7 @@ module.exports = {
 		},
    
    // before: require('./mock/mock-server.js')
-   after: require('./mock/mock-server.js')
+   //after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
