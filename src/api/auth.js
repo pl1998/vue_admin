@@ -7,6 +7,13 @@ export function getPermissionList() {
   })
 }
 
+export function getAllPermissions() {
+  return request({
+    url: '/auth/all_permissions', 
+    method: 'get'
+  })
+}
+
 export function getUserList() {
     return request({
       url: '/auth/user', 

@@ -116,8 +116,8 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
+        path: 'index',
+        component: () => import('@/views/permission/permission'),
         name: 'PagePermission',
         meta: {
           title: '权限管理',

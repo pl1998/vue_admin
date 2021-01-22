@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form>
         <el-form-item>
-          <el-button type="success" @click="add" icon="el-icon-plus">add</el-button>
+          <el-button type="success" @click="add" icon="el-icon-plus"></el-button>
         </el-form-item>
       </el-form>
     </div>

@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form>
         <el-form-item>
-          <el-button type="success" @click="add" icon="el-icon-plus">add</el-button>
+          <el-button type="success" @click="add" icon="el-icon-plus"></el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -18,19 +18,20 @@
         <el-table-column prop="name" label="角色名称"></el-table-column>
         <el-table-column prop="status" label="权限状态">
           <template slot-scope="{row}">
-            <el-tag v-if="row.status == 0">正常</el-tag>
-            <el-tag v-else>禁用</el-tag>
+            <!-- <el-tag v-if="row.status == 0">正常</el-tag>·
+            <el-tag v-else>禁用</el-tag> -->
           </template>
         </el-table-column>
-         <!-- <el-table-column prop="nodes" label="权限节点">
+         <el-table-column prop="nodes" label="权限节点">
           <template slot-scope="{row}">
             <sapn>{{row.nodes}}</sapn>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column prop="description" label="角色描述">
           <template slot-scope="{row}">
             <el-tag>{{row.description}}</el-tag>
           </template>
+          
         </el-table-column>
         <el-table-column prop="create_time" label="添加时间">
           <template slot-scope="{row}">
