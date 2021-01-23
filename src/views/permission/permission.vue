@@ -64,7 +64,7 @@
         <el-form-item label="请选择父菜单: ">
 
           <SelectTree v-if="dialogVisible" :props="defaultProps" :nodes="permissions" :value="checkedPermission" @setId="setId($event)" />
-         
+
           <span style="color: rgb(224, 62, 62); font-size: 12px;">! 可选, 不填写时默认为根节点</span>
         </el-form-item>
         <el-form-item>
@@ -101,7 +101,8 @@ export default {
         hidden: "1",
         url: undefined
       },
-      permissions:[]
+      permissions:[],
+      beforeClose:true
     }
   },
   methods: {
@@ -115,12 +116,12 @@ export default {
       })
     },
     async add(){
-     
+
       this.title = '新增权限节点'
       this.form = this.$options.data().form;
       await this.setFormPermissionTree();
       this.dialogVisible = true;
-     
+
     },
     async edit(item)
     {
