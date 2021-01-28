@@ -16,10 +16,10 @@
         row-key="id"
       >
         <el-table-column prop="name" label="角色名称"></el-table-column>
-        <el-table-column prop="status" label="权限状态">
+        <el-table-column prop="status" label="权限状态" >
           <template slot-scope="{row}">
-            <!-- <el-tag v-if="row.status == 0">正常</el-tag>·
-            <el-tag v-else>禁用</el-tag> -->
+           <el-tag v-if="row.status == 0">正常</el-tag>
+            <el-tag v-else>禁用</el-tag>
           </template>
         </el-table-column>
          <el-table-column prop="nodes" label="权限节点">
@@ -31,7 +31,7 @@
           <template slot-scope="{row}">
             <el-tag>{{row.description}}</el-tag>
           </template>
-          
+
         </el-table-column>
         <el-table-column prop="create_time" label="添加时间">
           <template slot-scope="{row}">
@@ -46,8 +46,37 @@
         </el-table-column>
       </el-table>
     </div>
+   <el-dialog :title="title" :visible.sync="dialogVisible" :before-close="handleClose">
+      <el-form ref="roleForm" :model="form" label-width="100px" v-if="dialogVisible">
+        <el-form-item label="角色名称: " :required="true" prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述: " :required="true" prop="description">
+          <el-input v-model="form.description"></el-input>
+        </el-form-item>
+        <el-form-item label="状态选择: " :required="true" prop="status" >
+          <el-radio v-model="form.status" label="1">启用</el-radio>
+          <el-radio v-model="form.status" label="2">禁用</el-radio>
+        </el-form-item>
+        <el-form-item label="赋予权限节点: " :required="true" >
+          <el-tree
+            :data="form.permissions"
+            show-checkbox
+            default-expand-all
+            node-key="id"
+            ref="tree"
+            :default-expand-all="true"
+            highlight-current
+            @check-change="nodeChange"
+            :props="defaultProps">
+          </el-tree>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="submit">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
 
-    <!-- <selectTree></selectTree> -->
   </div>
 </template>
 
@@ -55,6 +84,9 @@
 import path from "path";
 import { deepClone } from "@/utils";
 import { getRoles, addRole, deleteRole, updateRole } from "@/api/role";
+import { getPermissionList } from "@/api/auth";
+
+import selectTree from './selectTree'
 
 const defaultRole = {
   key: "",
@@ -64,17 +96,27 @@ const defaultRole = {
 };
 
 export default {
+  components: {selectTree},
   data() {
     return {
+      defaultProps: {
+        label: 'name',
+        children: 'children'
+      },
+      count: 1,
+      permissions: [],
+      title: "",
       role: Object.assign({}, defaultRole),
       routes: [],
       list: [],
       dialogVisible: false,
       dialogType: "new",
       checkStrictly: false,
-      defaultProps: {
-        children: "children",
-        label: "title",
+      form: {
+        name: "",
+        description: "",
+        status: "",
+        node:[]
       },
       listLoading: false,
     };
@@ -86,7 +128,7 @@ export default {
   },
   created() {
     // Mock: get all routes and roles list from server
-    this.getRoutes();
+    // this.getRoutes();
     this.getRoles();
   },
   methods: {
@@ -96,179 +138,75 @@ export default {
       this.routes = this.generateRoutes(res.data);
     },
     async getRoles() {
-      const { data } = await getRoles();
+      const {data} = await getRoles();
       this.list = data.list;
     },
-    add() {},
-    async edit(item) {},
-    async del(item) {},
+    add() {
+      this.dialogVisible = true
+      this.title = '添加角色'
+    },
+    async edit(item) {
 
-    // Reshape the routes structure so that it looks the same as the sidebar
-    generateRoutes(routes, basePath = "/") {
-      const res = [];
+    },
+    async del(item) {
 
-      for (let route of routes) {
-        // skip some route
-        if (route.hidden) {
-          continue;
-        }
-
-        const onlyOneShowingChild = this.onlyOneShowingChild(
-          route.children,
-          route
-        );
-
-        if (route.children && onlyOneShowingChild && !route.alwaysShow) {
-          route = onlyOneShowingChild;
-        }
-
-        const data = {
-          path: path.resolve(basePath, route.path),
-          title: route.meta && route.meta.title,
-        };
-
-        // recursive child routes
-        if (route.children) {
-          data.children = this.generateRoutes(route.children, data.path);
-        }
-        res.push(data);
+    },
+    nodeChange(){
+      let keys = this.$refs.tree.getCheckedKeys()
+      if(keys.length!=0){
+        this.form.node = keys;
+      }else {
+        this.form.node = "";
       }
-      return res;
     },
-    generateArr(routes) {
-      let data = [];
-      routes.forEach((route) => {
-        data.push(route);
-        if (route.children) {
-          const temp = this.generateArr(route.children);
-          if (temp.length > 0) {
-            data = [...data, ...temp];
-          }
-        }
-      });
-      return data;
-    },
-    handleAddRole() {
-      this.role = Object.assign({}, defaultRole);
-      if (this.$refs.tree) {
-        this.$refs.tree.setCheckedNodes([]);
-      }
-      this.dialogType = "new";
-      this.dialogVisible = true;
-    },
-    handleEdit(scope) {
-      this.dialogType = "edit";
-      this.dialogVisible = true;
-      this.checkStrictly = true;
-      this.role = deepClone(scope.row);
-      this.$nextTick(() => {
-        const routes = this.generateRoutes(this.role.routes);
-        this.$refs.tree.setCheckedNodes(this.generateArr(routes));
-        // set checked state of a node not affects its father and child nodes
-        this.checkStrictly = false;
-      });
-    },
-    handleDelete({ $index, row }) {
-      this.$confirm("Confirm to remove the role?", "Warning", {
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
-        type: "warning",
+    submit(){
+      addRole(this.form).then((response)=>{
+
       })
-        .then(async () => {
-          await deleteRole(row.key);
-          this.rolesList.splice($index, 1);
-          this.$message({
-            type: "success",
-            message: "Delete succed!",
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-        });
     },
-    generateTree(routes, basePath = "/", checkedKeys) {
-      const res = [];
-
-      for (const route of routes) {
-        const routePath = path.resolve(basePath, route.path);
-
-        // recursive child routes
-        if (route.children) {
-          route.children = this.generateTree(
-            route.children,
-            routePath,
-            checkedKeys
-          );
-        }
-
-        if (
-          checkedKeys.includes(routePath) ||
-          (route.children && route.children.length >= 1)
-        ) {
-          res.push(route);
-        }
-      }
-      return res;
+    handleClose() {
+      this.dialogVisible = false
     },
-    async confirmRole() {
-      const isEdit = this.dialogType === "edit";
-
-      const checkedKeys = this.$refs.tree.getCheckedKeys();
-      this.role.routes = this.generateTree(
-        deepClone(this.serviceRoutes),
-        "/",
-        checkedKeys
-      );
-
-      if (isEdit) {
-        await updateRole(this.role.key, this.role);
-        for (let index = 0; index < this.rolesList.length; index++) {
-          if (this.rolesList[index].key === this.role.key) {
-            this.rolesList.splice(index, 1, Object.assign({}, this.role));
-            break;
-          }
-        }
-      } else {
-        const { data } = await addRole(this.role);
-        this.role.key = data.key;
-        this.rolesList.push(this.role);
-      }
-
-      const { description, key, name } = this.role;
-      this.dialogVisible = false;
-      this.$notify({
-        title: "Success",
-        dangerouslyUseHTMLString: true,
-        message: `
-            <div>Role Key: ${key}</div>
-            <div>Role Name: ${name}</div>
-            <div>Description: ${description}</div>
-          `,
-        type: "success",
-      });
+    getCheckedNodes() {
+      console.log(this.$refs.tree.getCheckedNodes());
     },
-    // reference: src/view/layout/components/Sidebar/SidebarItem.vue
-    onlyOneShowingChild(children = [], parent) {
-      let onlyOneChild = null;
-      const showingChildren = children.filter((item) => !item.hidden);
-
-      // When there is only one child route, the child route is displayed by default
-      if (showingChildren.length === 1) {
-        onlyOneChild = showingChildren[0];
-        onlyOneChild.path = path.resolve(parent.path, onlyOneChild.path);
-        return onlyOneChild;
-      }
-
-      // Show parent if there are no child route to display
-      if (showingChildren.length === 0) {
-        onlyOneChild = { ...parent, path: "", noShowingChildren: true };
-        return onlyOneChild;
-      }
-
-      return false;
+    getCheckedKeys() {
+      return this.$refs.tree.getCheckedKeys();
     },
+    setCheckedNodes() {
+      this.$refs.tree.setCheckedNodes([{
+        id: 5,
+        label: '二级 2-1'
+      }, {
+        id: 9,
+        label: '三级 1-1-1'
+      }]);
+    },
+    setCheckedKeys() {
+      console.log(this.$refs.tree.setCheckedKeys([3]));
+      this.$refs.tree.setCheckedKeys([3]);
+    },
+    resetChecked() {
+      this.$refs.tree.setCheckedKeys([]);
+    },
+    //获取权限节点
+    allPermissions(){
+      getPermissionList().then((response) => {
+        const {data} = response
+        this.permissions = data.list
+        //强制dom渲染
+        this.$set(
+          this.form,
+          "permissions",
+          data.list
+        );
+      })
+    }
   },
-};
+  mounted() {
+    this.allPermissions();
+  }
+}
 </script>
 
 <style lang="scss" scoped>

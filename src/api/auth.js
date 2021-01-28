@@ -10,17 +10,17 @@ export function addUser(data) {
 
 export function getPermissionList() {
   return request({
-    url: '/auth/permissions',
+    url: '/admin/permissions',
     method: 'get'
   })
 }
 
-export function getAllPermissions() {
-  return request({
-    url: '/auth/all_permissions',
-    method: 'get'
-  })
-}
+// export function getAllPermissions() {
+//   return request({
+//     url: '/auth/all_permissions',
+//     method: 'get'
+//   })
+// }
 
 export function getUserList() {
     return request({

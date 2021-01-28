@@ -51,10 +51,10 @@
         <el-form-item label="赋予角色:" :required="true">
           <!-- <el-tree ref="roleTree" :data="Roles" show-checkbox :default-checked-keys="checkedRoles" :default-expanded-keys="checkedRoles" node-key="id" :props="defaultProps" @check-change="nodeChange" />
         -->
-          <el-select v-model="form.region" placeholder="赋予角色">
+          <!-- <el-select v-model="form.region" placeholder="赋予角色">
             <el-option label="admin" value="admin"></el-option>
             <el-option label="user" value="user"></el-option>
-        </el-select>
+        </el-select> -->
         </el-form-item>
         <el-form-item>
           <el-button @click="submit()" class="btn-success">提交</el-button>
@@ -67,6 +67,7 @@
 </template>
 <script>
 import { getUserList,addUser} from "../../api/auth";
+import { allRole} from "../../api/role";
 export default {
   name: "UserPermission",
   data() {
@@ -102,6 +103,11 @@ export default {
         this.mate = data.mate;
         this.listLoading = false;
       });
+    },
+    getAllRole(){
+allRole().then((response)=>{
+  
+})
     },
     add() {
       this.title='添加用户'
