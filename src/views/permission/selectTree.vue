@@ -1,37 +1,43 @@
+<!-- Vue SFC -->
 <template>
-     <treeselect v-model="value" :multiple="true" :options="options" />
+  <div>
+    <treeselect v-model="valueId" :multiple="false" :options="nodes" :normalizer="normalizer" />
+  </div>
 </template>
+
 <script>
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-    components:{Treeselect},
-    props:[""],
-    data(){
+  components: { Treeselect },
+  props: ["nodes", "value"],
+  data () {
+    return {
+      valueId: 0,
+      node: {
+           id: 0,
+           name: null,
+           title: null,
+           label:null
+      },
+      normalizer (node) {
         return {
-            value:null,
-             options: [ {
-          id: 'a',
-          label: 'a',
-          children: [ {
-            id: 'aa',
-            label: 'aa',
-          }, {
-            id: 'ab',
-            label: 'ab',
-          } ],
-        }, {
-          id: 'b',
-          label: 'b',
-        }, {
-          id: 'c',
-          label: 'c',
-        } ],
+          id: node.id,
+          label: node.title,
+          children: node.children
+        };
       }
-    }
-}
-</script>
-<style scoped>
+    };
+  },
+  mounted () {
+    this.valueId = this.value ? this.value : 0;
+  },
 
-</style>
+  watch: {
+    valueId (newId) {
+      this.$emit("setId", this.valueId);
+    }
+  }
+};
+</script>

@@ -19,7 +19,9 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 
-
+//图标选择
+import iconPicker from 'vue-fontawesome-elementui-icon-picker';
+Vue.use(iconPicker);
 process.env.ENV == 'production' &&
 	Sentry.init({
 		dsn: 'https://912d97ea26704c828aff071141a4ca50@o408607.ingest.sentry.io/5299000',

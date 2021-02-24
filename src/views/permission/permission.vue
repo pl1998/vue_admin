@@ -24,12 +24,12 @@
           </template>
         </el-table-column>
         <!-- <el-table-column prop="title" label="前端title"></el-table-column> -->
-        <!-- <el-table-column prop="icon" label="icon">
+        <el-table-column prop="icon" label="icon">
           <template slot-scope="{row}">
-            <span v-if="row.p_id">{{ row.icon }}</span>
+            <span v-if="row.icon" :class="row.icon"></span>
             <span v-else>-</span>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column prop="url" label="url">
           <template slot-scope="{row}">
             <el-tag>
@@ -65,7 +65,11 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="后端api: " :required="true" prop="path">
-          <el-input v-model="form.path"></el-input>
+            <el-input v-model="form.path"></el-input>
+        </el-form-item>
+
+        <el-form-item label="icon" v-if="form.root">
+           <icon-picker v-model="form.icon" :required="true" prop="path" ></icon-picker>
         </el-form-item>
         <el-form-item label="方法选择: " :required="true" prop="method" v-if="!form.root">
           <el-radio v-model="form.method" label="POST" border></el-radio>
@@ -76,7 +80,7 @@
         </el-form-item>
         <el-form-item label="请选择父菜单: ">
 
-          <SelectTree v-if="dialogVisible" :props="defaultProps" :nodes="permissions" :value="checkedPermission" @setId="setId($event)" />
+        <SelectTree v-if="dialogVisible" :props="defaultProps" :nodes="permissions" :value="checkedPermission" @setId="setId($event)" />
 
           <span style="color: rgb(224, 62, 62); font-size: 12px;">! 可选, 不填写时默认为根节点</span>
         </el-form-item>
@@ -89,12 +93,12 @@
 </template>
 
 <script>
-import selectTree from '../permission/selectTree'
+import SelectTree from '../permission/selectTree'
 import showTree from '../../components/Tree/showTree'
-import {getPermissionList,getAllPermissions} from "../../api/auth"
+import {getPermissionList,getAllPermissions,addPermissions,delPermissions,updatePermissions} from "../../api/auth"
 export default {
   name: 'PagePermission',
-  components: { selectTree,showTree },
+  components: { SelectTree,showTree },
   data(){
     return {
       list:[],
@@ -114,44 +118,90 @@ export default {
         url: undefined
       },
       permissions:[],
-      beforeClose:true
+      beforeClose:true,
+      checkedPermission: undefined,
+      defaultProps: {
+      children: "children",
+      label: "name"
+      },
     }
   },
   methods: {
+    /**
+     * 获取列表
+     */
     getList(params)
     {
       //this.listLoading = true
       getPermissionList(params).then(response => {
         const {data} = response
-        console.log(data.list)
         this.list = data.list
       })
     },
-    async add(){
+    submit(){
+      console.log(this.form)
+      if(this.form.id !=undefined) {
+        updatePermissions(this.form).then(response => {
+         this.$message.success("success");
+          this.dialogVisible = false;
+          this.getList()
+      })
+      } else {
+      addPermissions(this.form).then(response => {
+         this.$message.success("success");
+          this.dialogVisible = false;
+          this.getList()
+      })
+      }
 
+    },
+    /**
+     * 添加权限
+     */
+    async add(){
       this.title = '新增权限节点'
       this.form = this.$options.data().form;
       await this.setFormPermissionTree();
       this.dialogVisible = true;
-
     },
     async edit(item)
     {
       this.title = '编辑权限节点'
+        await this.setFormPermissionTree();
+      this.dialogVisible = true
+      this.form = item
     },
+    /**
+     * 删除权限节点
+     */
     async del(item)
     {
-
+       this.$confirm('此操作将永久删除权限, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+         delPermissions(item.id).then(response => {
+           this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.getList()
+      })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
     handleClose() {
       this.dialogVisible = false
     },
-
     /**
      * 设置权限节点树
      */
     setFormPermissionTree (id) {
-      alert(22)
       new Promise((resolve, reject) => {
         getAllPermissions().then(r => {
           const { data } = r;
@@ -163,15 +213,14 @@ export default {
             }
           ];
           permissionNode = permissionNode.concat(
-            data.allPermissionsNode
+            data.list
           );
 
-          this.$set(this, "permissions", permissionNode);
+          this.$set(this, "permissions",permissionNode);
           resolve(true);
         });
       });
     },
-
     handleRolesChange() {
       this.$router.push({ path: '/permission/index?' + +new Date() })
     }

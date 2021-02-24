@@ -58,7 +58,7 @@
           <el-radio v-model="form.status" label="1">启用</el-radio>
           <el-radio v-model="form.status" label="2">禁用</el-radio>
         </el-form-item>
-        <el-form-item label="赋予权限节点: " :required="true" >
+        <el-form-item label="赋予权限节点:" :required="true" >
           <el-tree
             :data="form.permissions"
             show-checkbox
