@@ -14,10 +14,13 @@ export function addUser(data) {
 /**
  * 获取权限列表
  */
-export function getPermissionList() {
+export function getPermissionList(id) {
   return request({
     url: '/admin/permissions',
-    method: 'get'
+    method: 'get',
+    data:{
+      'id':id
+    }
   })
 }
 /**
@@ -66,6 +69,17 @@ export function delPermissions(id) {
   return request({
     url: '/admin/permissions/'+id,
     method: 'delete'
+  })
+}
+/**
+ * 更新用户
+ * @param {*} data
+ */
+export function updateUser(data){
+  return request({
+    url: '/admin/users/'+data.id,
+    method: 'put',
+    data:data
   })
 }
 

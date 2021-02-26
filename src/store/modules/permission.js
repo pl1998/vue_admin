@@ -45,7 +45,7 @@ const mutations = {
     state.routes = constantRoutes.concat(routes)
   }
 }
-
+//设置系统菜单和路由
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
@@ -55,6 +55,7 @@ const actions = {
       } else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }
+      console.log(accessedRoutes)
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

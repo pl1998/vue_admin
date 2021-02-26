@@ -8,28 +8,16 @@
       </el-form>
     </div>
      <div class="content-container" v-loading="listLoading">
-         <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id">
         <el-table-column prop="name" label="权限名称"></el-table-column>
-        <!-- <el-table-column label="是否为菜单">
-          <template slot-scope="{row}">
-            <el-tag v-if="row.p_id == 0">是</el-tag>
-            <el-tag v-else>否</el-tag>
-          </template>
-        </el-table-column> -->
+
         <el-table-column prop="status" label="权限状态">
           <template slot-scope="{row}">
             <el-tag v-if="row.status == 1">正常</el-tag>
             <el-tag v-else>禁用</el-tag>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="title" label="前端title"></el-table-column> -->
-        <el-table-column prop="icon" label="icon">
-          <template slot-scope="{row}">
-            <span v-if="row.icon" :class="row.icon"></span>
-            <span v-else>-</span>
-          </template>
-        </el-table-column>
+
         <el-table-column prop="url" label="url">
           <template slot-scope="{row}">
             <el-tag>
@@ -51,21 +39,23 @@
         </el-table-column>
       </el-table>
     </div>
-    </div>
      <el-dialog :title="title" :visible.sync="dialogVisible" :before-close="handleClose">
       <el-form ref="roleForm" :model="form" label-width="100px" v-if="dialogVisible">
         <el-form-item label="是否为菜单">
           <el-radio-group v-model="form.root">
-            <el-radio-button :label="true">是</el-radio-button>
-            <el-radio-button :label="false">否</el-radio-button>
+            <el-radio-button :label="false">是</el-radio-button>
+            <el-radio-button :label="true">否</el-radio-button>
           </el-radio-group>
-          <i>谨慎修改</i>
         </el-form-item>
         <el-form-item label="权限名称: " :required="true" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="后端api: " :required="true" prop="path">
             <el-input v-model="form.path"></el-input>
+        </el-form-item>
+
+         <el-form-item label="前端路由: " :required="true" v-if="form.root" prop="url">
+            <el-input v-model="form.url"></el-input>
         </el-form-item>
 
         <el-form-item label="icon" v-if="form.root">
@@ -115,7 +105,8 @@ export default {
         p_id: 0,
         root: false,
         hidden: "1",
-        url: undefined
+        url: undefined,
+        is_menu:1
       },
       permissions:[],
       beforeClose:true,
@@ -127,6 +118,13 @@ export default {
     }
   },
   methods: {
+     handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     /**
      * 获取列表
      */
@@ -139,7 +137,7 @@ export default {
       })
     },
     submit(){
-      console.log(this.form)
+      // await this.validateForm("roleForm");
       if(this.form.id !=undefined) {
         updatePermissions(this.form).then(response => {
          this.$message.success("success");
@@ -166,10 +164,19 @@ export default {
     },
     async edit(item)
     {
-      this.title = '编辑权限节点'
-        await this.setFormPermissionTree();
-      this.dialogVisible = true
-      this.form = item
+      console.log(item.root)
+      await this.setFormPermissionTree();
+
+      this.form = Object.assign(this.form, item, {
+        method: item.method.toUpperCase(),
+        root: item.p_id == 0,
+        hidden: item.hidden.toString(),
+        is_menu:item.is_menu
+      });
+      this.checkedPermission = item.p_id;
+      this.permissionTitle = item.name;
+      this.title = "编辑权限 | " + item.name;
+      this.dialogVisible = true;
     },
     /**
      * 删除权限节点
@@ -195,8 +202,9 @@ export default {
           });
         });
     },
-    handleClose() {
-      this.dialogVisible = false
+
+    setId(id){
+      this.form.p_id = id;
     },
     /**
      * 设置权限节点树
@@ -205,6 +213,7 @@ export default {
       new Promise((resolve, reject) => {
         getAllPermissions().then(r => {
           const { data } = r;
+
           let permissionNode = [
             {
               id: 0,

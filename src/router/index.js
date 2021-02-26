@@ -79,7 +79,8 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '仪表盘', icon: 'dashboard', affix: true }
+        meta: { title: '仪表盘', icon: 'dashboard', affix: true },
+        roles: ['admin', 'editor','users']
       }
     ]
   }
@@ -95,7 +96,7 @@ export const constantRoutes = [
   //     }
   //   ]
   // }
- 
+
 ]
 
 /**
@@ -107,7 +108,7 @@ export const asyncRoutes = [
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
-    alwaysShow: true, 
+    alwaysShow: true,
     name: 'Permission',
     meta: {
       title: '权限管理',
@@ -144,7 +145,7 @@ export const asyncRoutes = [
     ]
   },
 
- 
+
 
   /** when your routing map is too long, you can split it into small modules **/
   //componentsRouter,

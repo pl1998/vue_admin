@@ -16,8 +16,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="roles" label="角色">
+
           <template slot-scope="{row}">
-            <el-tag >{{row.roles}}</el-tag>
+
+            <el-tag style="margin: 0px 2px 0px 2px;"  v-for="role in row.roles_node"> {{role.name}} </el-tag>
+
           </template>
         </el-table-column>
         <el-table-column prop="created_at" label="添加时间">
@@ -48,14 +51,23 @@
         <el-form-item label="确认密码: " prop="password" :required="true">
           <el-input v-model="form.password_confirmation" type="password"></el-input>
         </el-form-item>
-        <el-form-item label="赋予角色:" :required="true">
+        <!-- <el-form-item label="赋予角色:" :required="true"> -->
           <!-- <el-tree ref="roleTree" :data="Roles" show-checkbox :default-checked-keys="checkedRoles" :default-expanded-keys="checkedRoles" node-key="id" :props="defaultProps" @check-change="nodeChange" />
         -->
-          <!-- <el-select v-model="form.region" placeholder="赋予角色">
+          <el-form-item label="赋予角色" prop="roles[]">
+              <el-select v-model="form.roles" multiple filterable allow-create default-first-option  placeholder="请选择角色">
+    <el-option
+      v-for="item in allRole"
+      :key="item.id"
+      :label="item.name"
+      :value="item.id">
+    </el-option>
+  </el-select>
+          <!-- <el-select v-model="form.roles" placeholder="赋予角色">
             <el-option label="admin" value="admin"></el-option>
             <el-option label="user" value="user"></el-option>
         </el-select> -->
-        </el-form-item>
+    </el-form-item>
         <el-form-item>
           <el-button @click="submit()" class="btn-success">提交</el-button>
         </el-form-item>
@@ -66,7 +78,7 @@
   </div>
 </template>
 <script>
-import { getUserList,addUser} from "../../api/auth";
+import { getUserList,addUser,updateUser} from "../../api/auth";
 import { allRole} from "../../api/role";
 export default {
   name: "UserPermission",
@@ -76,14 +88,20 @@ export default {
       mate: [],
       listLoading: false,
       form:{
+        id:undefined,
         name:null,
         email:null,
         avatar:null,
         password:undefined,
-        password_confirmation:undefined
+        password_confirmation:undefined,
+        roles:[]
       },
       dialogVisible:false,
-      title:undefined
+      title:undefined,
+      allRole:[{
+        id:0,
+        name:"无权限"
+      }]
     };
   },
   methods: {
@@ -105,30 +123,49 @@ export default {
       });
     },
     getAllRole(){
-allRole().then((response)=>{
-  
-})
+      allRole().then((response)=>{
+        const {data} = response
+        this.allRole = data
+     })
     },
     add() {
+      this.getAllRole()
+
       this.title='添加用户'
       this.dialogVisible = true;
     },
     submit(){
+      if(this.form.id!=undefined) {
+        updateUser(this.form).then((response)=>{
+          this.$message.success(response.message);
+            this.getList()
+            this.dialogVisible = false
+        })
+      }else{
       addUser(this.form).then((response)=>{
-
         if(response.code==200){
            this.$message({
             type: "success",
             message: response.message,
             duration: 5 * 1000
           });
-     this.getList()
-     this.dialogVisible = false
+        this.getList()
+        this.dialogVisible = false
         }
       })
-      this.dialogVisible=true
+      }
     },
-    async edit(item) {},
+    async edit(item) {
+      await this.getAllRole();
+      this.form = Object.assign(item, {
+        name: item.name,
+        roles_node: item.roles_node,
+        id: item.id
+      });
+      this.checkedRoles = item.roles;
+      this.title = "编辑用户 | " + item.name;
+      this.dialogVisible = true;
+    },
     async del(item) {},
   },
   mounted() {

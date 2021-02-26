@@ -18,15 +18,15 @@
         <el-table-column prop="name" label="角色名称"></el-table-column>
         <el-table-column prop="status" label="权限状态" >
           <template slot-scope="{row}">
-           <el-tag v-if="row.status == 0">正常</el-tag>
+           <el-tag v-if="row.status == 1">正常</el-tag>
             <el-tag v-else>禁用</el-tag>
           </template>
         </el-table-column>
-         <el-table-column prop="nodes" label="权限节点">
+         <!-- <el-table-column prop="nodes" label="权限节点">
           <template slot-scope="{row}">
-            <sapn>{{row.nodes}}</sapn>
+            <span>{{row.nodes}}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="description" label="角色描述">
           <template slot-scope="{row}">
             <el-tag>{{row.description}}</el-tag>
@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column prop="create_time" label="添加时间">
           <template slot-scope="{row}">
-            <sapn>{{row.create_time}}</sapn>
+            <span>{{row.created_at}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="250px">
@@ -65,7 +65,7 @@
             default-expand-all
             node-key="id"
             ref="tree"
-            :default-expand-all="true"
+            :default-checked-keys="form.node"
             highlight-current
             @check-change="nodeChange"
             :props="defaultProps">
@@ -113,9 +113,10 @@ export default {
       dialogType: "new",
       checkStrictly: false,
       form: {
-        name: "",
-        description: "",
-        status: "",
+        id:undefined,
+        name: undefined,
+        description:undefined,
+        status: undefined,
         node:[]
       },
       listLoading: false,
@@ -132,6 +133,13 @@ export default {
     this.getRoles();
   },
   methods: {
+     handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     async getRoutes() {
       const res = await getRoutes();
       this.serviceRoutes = res.data;
@@ -146,13 +154,64 @@ export default {
       this.title = '添加角色'
     },
     async edit(item) {
-
+      this.form = Object.assign(this.form, {
+        name: item.name,
+        description: item.description,
+        status: item.status.toString(),
+        id: item.id,
+        node:item.node
+      });
+      console.log(item.node)
+      await this.setFormPermissionTree(item.id);
+      this.title = "编辑角色 | " + item.name;
+      this.dialogVisible = true;
+      this.formLoadding = false;
+      this.allPermissions();
     },
     async del(item) {
+          this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+         deleteRole(item.id).then(response => {
+           this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.getRoles()
+      })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    },
+      setFormPermissionTree () {
+      new Promise((resolve, reject) => {
+        getPermissionList().then(r => {
+          const { data } = r;
+          let permissionNode = [
+            {
+              id: 0,
+              name: "根节点",
+              title: "根节点"
+            }
+          ];
+          permissionNode = permissionNode.concat(
+            data.list
+          );
 
+          this.$set(this, "permissions",permissionNode);
+          resolve(true);
+        });
+      });
     },
     nodeChange(){
-      let keys = this.$refs.tree.getCheckedKeys()
+      // let keys = this.$refs.tree.getCheckedKeys()
+       let keys = this.$refs.tree.getCheckedKeys();
+      this.form.node_ids = keys;
       if(keys.length!=0){
         this.form.node = keys;
       }else {
@@ -160,13 +219,21 @@ export default {
       }
     },
     submit(){
-      addRole(this.form).then((response)=>{
-
+       if(this.form.id!=undefined) {
+        updateRole(this.form).then((response)=>{
+        this.$message.success("success")
+        this.dialogVisible= false
+        this.getRoles();
       })
+       }else {
+        addRole(this.form).then((response)=>{
+        this.$message.success("success")
+        this.dialogVisible= false
+        this.getRoles();
+      })
+       }
     },
-    handleClose() {
-      this.dialogVisible = false
-    },
+
     getCheckedNodes() {
       console.log(this.$refs.tree.getCheckedNodes());
     },
