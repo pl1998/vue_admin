@@ -11,7 +11,7 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
-
+import {AuthRouteMap,SafeRouteMap} from './routerMap.js'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -38,6 +38,10 @@ import nestedRouter from './modules/nested'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
+// const PermissionAdmin = () => import('@/views/permission/user') // 用户管理
+// const PermissionRole = () => import('@/views/permission/role') // 角色管理
+// const Permission = () => import('@/views/permission/permission') // 权限管理
+
 export const constantRoutes = [
   {
     path: '/redirect',
@@ -79,88 +83,40 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '仪表盘', icon: 'dashboard', affix: true },
+        meta: { title: '仪表盘', icon: 'fa fa-home', affix: true },
         roles: ['admin', 'editor','users']
       }
     ]
-  }
+  },
   // {
-  //   path: '/documentation',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/documentation/index'),
-  //       name: 'Documentation',
-  //       meta: { title: 'Documentation', icon: 'documentation', affix: true }
-  //     }
-  //   ]
-  // }
+	// 	path: '/permission',
+	// 	component: Permission,
+	// },
+	// {
+	// 	path: '/role',
+	// 	component: PermissionRole
+	// },
+	// {
+	// 	path: '/user',
+	// 	component: PermissionAdmin
+	// }
+
 
 ]
-
+export const otherRouter = [ { path: '*', redirect: '/404', hidden: true } ]
 /**
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true,
-    name: 'Permission',
-    meta: {
-      title: '权限管理',
-      icon: 'lock',
-      roles: ['admin', 'editor']
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/permission/permission'),
-        name: 'PagePermission',
-        meta: {
-          title: '权限管理',
-          roles: ['admin']
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '角色管理'
-        }
-      },
-      {
-        path: 'user',
-        component: () => import('@/views/permission/user'),
-        name: 'UserPermission',
-        meta: {
-          title: '用户管理',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
+export const asyncRoutes=AuthRouteMap
 
-
-
-  /** when your routing map is too long, you can split it into small modules **/
-  //componentsRouter,
-  //chartsRouter,
-  //nestedRouter,
-  //tableRouter,
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
-]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
+
 
 const router = createRouter()
 

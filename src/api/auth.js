@@ -35,10 +35,11 @@ export function getAllPermissions() {
 /**
  * 获取用户列表
  */
-export function getUserList() {
+export function getUserList(data) {
     return request({
       url: '/admin/users',
-      method: 'get'
+      method: 'get',
+      params:data
     })
 }
 

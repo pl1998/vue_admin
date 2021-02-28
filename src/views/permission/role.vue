@@ -47,7 +47,7 @@
       </el-table>
     </div>
    <el-dialog :title="title" :visible.sync="dialogVisible" :before-close="handleClose">
-      <el-form ref="roleForm" :model="form" label-width="100px" v-if="dialogVisible">
+      <el-form ref="roleForm" :model="form" label-width="100px" v-loading="formLoadding">
         <el-form-item label="角色名称: " :required="true" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -112,6 +112,7 @@ export default {
       dialogVisible: false,
       dialogType: "new",
       checkStrictly: false,
+      formLoadding:true,
       form: {
         id:undefined,
         name: undefined,
@@ -149,9 +150,13 @@ export default {
       const {data} = await getRoles();
       this.list = data.list;
     },
-    add() {
-      this.dialogVisible = true
-      this.title = '添加角色'
+    async add() {
+      this.title = "新增角色";
+      this.form = this.$options.data().form;
+      await this.setFormPermissionTree();
+      this.formLoadding = false;
+      this.dialogVisible = true;
+
     },
     async edit(item) {
       this.form = Object.assign(this.form, {
@@ -161,7 +166,6 @@ export default {
         id: item.id,
         node:item.node
       });
-      console.log(item.node)
       await this.setFormPermissionTree(item.id);
       this.title = "编辑角色 | " + item.name;
       this.dialogVisible = true;
@@ -188,29 +192,26 @@ export default {
           });
         });
     },
-      setFormPermissionTree () {
+    setFormPermissionTree () {
       new Promise((resolve, reject) => {
         getPermissionList().then(r => {
           const { data } = r;
-          let permissionNode = [
-            {
-              id: 0,
-              name: "根节点",
-              title: "根节点"
-            }
-          ];
-          permissionNode = permissionNode.concat(
-            data.list
-          );
-
-          this.$set(this, "permissions",permissionNode);
+          // let permissionNode = [
+          //   {
+          //     id: 0,
+          //     name: "根节点",
+          //     title: "根节点"
+          //   }
+          // ];
+          this.$set(this.form, "permissions",data.list);
           resolve(true);
         });
       });
     },
     nodeChange(){
-      // let keys = this.$refs.tree.getCheckedKeys()
-       let keys = this.$refs.tree.getCheckedKeys();
+
+      let keys = this.$refs.tree.getCheckedKeys();
+
       this.form.node_ids = keys;
       if(keys.length!=0){
         this.form.node = keys;
@@ -219,6 +220,7 @@ export default {
       }
     },
     submit(){
+      console.log(this.form.id)
        if(this.form.id!=undefined) {
         updateRole(this.form).then((response)=>{
         this.$message.success("success")

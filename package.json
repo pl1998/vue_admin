@@ -15,6 +15,9 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-solid-svg-icons": "^5.15.2",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
     "@riophae/vue-treeselect": "^0.4.0",
     "axios": "0.18.1",
     "clipboard": "2.0.4",
@@ -22,9 +25,11 @@
     "core-js": "3.6.5",
     "driver.js": "0.9.5",
     "dropzone": "5.5.1",
+    "e-icon-picker": "^1.0.17",
     "echarts": "4.2.1",
     "element-ui": "2.13.2",
     "file-saver": "2.0.1",
+    "font-awesome": "^4.7.0",
     "fuse.js": "3.4.4",
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",

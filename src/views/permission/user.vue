@@ -1,12 +1,28 @@
 <template>
   <div class="app-container">
+
+      <!-- 搜索 -->
     <div class="filter-container">
-      <el-form>
-        <el-form-item>
-          <el-button type="success" @click="add()" icon="el-icon-plus"></el-button>
+     <el-form :model="filter" :inline="true">
+        <el-form-item label="">
+          <el-input placeholder="" v-model="filter.email" clearable>
+            <template slot="prepend">Eamil</template>
+          </el-input>
         </el-form-item>
+        <el-form-item label="">
+          <el-input placeholder="" v-model="filter.name">
+            <template slot="prepend">用户名称</template>
+          </el-input>
+        </el-form-item>
+         <el-form-item>
+          <el-button type="primary" @click="search" icon="el-icon-search"></el-button>
+          <el-button type="dange" @click="resetForm" icon="el-icon-refresh"></el-button>
+          <el-button type="success" plain @click="add()" icon="el-icon-plus"></el-button>
+         </el-form-item>
       </el-form>
     </div>
+
+
     <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" row-key="id">
         <el-table-column prop="name" label="用户名"></el-table-column>
@@ -51,42 +67,40 @@
         <el-form-item label="确认密码: " prop="password" :required="true">
           <el-input v-model="form.password_confirmation" type="password"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="赋予角色:" :required="true"> -->
-          <!-- <el-tree ref="roleTree" :data="Roles" show-checkbox :default-checked-keys="checkedRoles" :default-expanded-keys="checkedRoles" node-key="id" :props="defaultProps" @check-change="nodeChange" />
-        -->
-          <el-form-item label="赋予角色" prop="roles[]">
+        <el-form-item label="赋予角色" prop="roles[]">
               <el-select v-model="form.roles" multiple filterable allow-create default-first-option  placeholder="请选择角色">
-    <el-option
-      v-for="item in allRole"
-      :key="item.id"
-      :label="item.name"
-      :value="item.id">
-    </el-option>
-  </el-select>
-          <!-- <el-select v-model="form.roles" placeholder="赋予角色">
-            <el-option label="admin" value="admin"></el-option>
-            <el-option label="user" value="user"></el-option>
-        </el-select> -->
+                <el-option
+                 v-for="item in allRole"
+                 :key="item.id"
+                 :label="item.name"
+                 :value="item.id">
+                 </el-option>
+              </el-select>
     </el-form-item>
-        <el-form-item>
+    <el-form-item>
           <el-button @click="submit()" class="btn-success">提交</el-button>
-        </el-form-item>
+    </el-form-item>
       </el-form>
     </el-dialog>
+     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :pageSize.sync="listQuery.pageSize"  @pagination="getList" />
 
-    <!-- <selectTree></selectTree> -->
   </div>
 </template>
 <script>
+import layoutMinix from "../../layout/components/mixins/layout";
 import { getUserList,addUser,updateUser} from "../../api/auth";
 import { allRole} from "../../api/role";
+import Pagination from "@/components/Pagination/index";
 export default {
   name: "UserPermission",
+  components:{Pagination},
+  mixins: [layoutMinix],
   data() {
     return {
       list: [],
       mate: [],
       listLoading: false,
+      page:undefined,
       form:{
         id:undefined,
         name:null,
@@ -101,7 +115,12 @@ export default {
       allRole:[{
         id:0,
         name:"无权限"
-      }]
+      }],
+      filter:{
+        email:undefined,
+        name:undefined
+      },
+
     };
   },
   methods: {
@@ -112,15 +131,17 @@ export default {
           })
           .catch(_ => {});
       },
-    getList() {
+    getList(params = {}) {
       this.listLoading = true;
-      getUserList().then((response) => {
-        console.log(response)
-        const { data, mate } = response;
-        this.list = data.list;
-        this.mate = data.mate;
-        this.listLoading = false;
+      params = Object.assign(params, this.filter)
+      getUserList(params).then((response) => {
+        const { list,mate } = response.data;
+        this.list = list
+        this.total = mate.total
+        this.page = mate.page
+        this.pageSize = mate.pageSize
       });
+       this.listLoading = false;
     },
     getAllRole(){
       allRole().then((response)=>{
@@ -130,7 +151,6 @@ export default {
     },
     add() {
       this.getAllRole()
-
       this.title='添加用户'
       this.dialogVisible = true;
     },
@@ -159,12 +179,22 @@ export default {
       await this.getAllRole();
       this.form = Object.assign(item, {
         name: item.name,
-        roles_node: item.roles_node,
+        roles: item.roles_node,
         id: item.id
       });
-      this.checkedRoles = item.roles;
+      console.log(item.roles_node)
+      // this.checkedRoles = item.roles_node;
       this.title = "编辑用户 | " + item.name;
       this.dialogVisible = true;
+    },
+    search(){
+
+      this.getList()
+    },
+    resetForm () {
+      //this.searchCodeList = []
+      this.filter = []
+      this.getList()
     },
     async del(item) {},
   },

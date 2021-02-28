@@ -10,19 +10,29 @@
      <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id">
         <el-table-column prop="name" label="权限名称"></el-table-column>
-
         <el-table-column prop="status" label="权限状态">
           <template slot-scope="{row}">
             <el-tag v-if="row.status == 1">正常</el-tag>
             <el-tag v-else>禁用</el-tag>
           </template>
         </el-table-column>
-
         <el-table-column prop="url" label="url">
           <template slot-scope="{row}">
             <el-tag>
               <span v-if="row.p_id != 0">{{ row.path }}</span>
               <span v-else>-</span>
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="icon" label="icon">
+          <template slot-scope="{row}">
+           <i :class="row.icon"></i>
+          </template>
+        </el-table-column>
+         <el-table-column prop="path" label="前端路由">
+          <template slot-scope="{row}">
+            <el-tag>
+              <span>{{ row.path }}</span>
             </el-tag>
           </template>
         </el-table-column>
@@ -42,26 +52,27 @@
      <el-dialog :title="title" :visible.sync="dialogVisible" :before-close="handleClose">
       <el-form ref="roleForm" :model="form" label-width="100px" v-if="dialogVisible">
         <el-form-item label="是否为菜单">
-          <el-radio-group v-model="form.root">
-            <el-radio-button :label="false">是</el-radio-button>
-            <el-radio-button :label="true">否</el-radio-button>
+          <el-radio-group v-model="form.is_menu">
+            <el-radio-button :label="true">是</el-radio-button>
+            <el-radio-button :label="false">否</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="权限名称: " :required="true" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="后端api: " :required="true" prop="path">
-            <el-input v-model="form.path"></el-input>
-        </el-form-item>
-
-         <el-form-item label="前端路由: " :required="true" v-if="form.root" prop="url">
+        <el-form-item label="后端api: " :required="true" prop="url">
             <el-input v-model="form.url"></el-input>
         </el-form-item>
 
-        <el-form-item label="icon" v-if="form.root">
-           <icon-picker v-model="form.icon" :required="true" prop="path" ></icon-picker>
+         <el-form-item label="前端路由: " :required="true" v-if="form.is_menu" prop="path">
+            <el-input v-model="form.path"></el-input>
         </el-form-item>
-        <el-form-item label="方法选择: " :required="true" prop="method" v-if="!form.root">
+
+        <el-form-item label="icon" v-if="form.is_menu">
+           <e-icon-picker v-model="form.icon" prop="icon" />
+           <!-- <icon-picker v-model="form.icon" :required="true" prop="path" ></icon-picker> -->
+        </el-form-item>
+        <el-form-item label="方法选择: " :required="true" prop="method" v-if="!form.is_menu">
           <el-radio v-model="form.method" label="POST" border></el-radio>
           <el-radio v-model="form.method" label="GET" border></el-radio>
           <el-radio v-model="form.method" label="*" border></el-radio>
@@ -69,10 +80,7 @@
           <el-radio v-model="form.method" label="DELETE" border></el-radio>
         </el-form-item>
         <el-form-item label="请选择父菜单: ">
-
         <SelectTree v-if="dialogVisible" :props="defaultProps" :nodes="permissions" :value="checkedPermission" @setId="setId($event)" />
-
-          <span style="color: rgb(224, 62, 62); font-size: 12px;">! 可选, 不填写时默认为根节点</span>
         </el-form-item>
         <el-form-item>
           <el-button @click="submit">提交</el-button>

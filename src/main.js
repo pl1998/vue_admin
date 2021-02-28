@@ -3,6 +3,9 @@ import Vue from 'vue'
 import Cookies from 'js-cookie'
 
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
+import 'font-awesome/css/font-awesome.min.css';
+
+
 
 import Element from 'element-ui'
 import './styles/element-variables.scss'
@@ -19,9 +22,17 @@ import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 
+
+
+
 //图标选择
-import iconPicker from 'vue-fontawesome-elementui-icon-picker';
-Vue.use(iconPicker);
+import iconPicker from 'e-icon-picker';
+import "e-icon-picker/dist/symbol.js"; //基本彩色图标库
+import 'e-icon-picker/dist/index.css'; // 基本样式，包含基本图标
+import 'font-awesome/css/font-awesome.min.css'; //font-awesome 图标库
+import 'element-ui/lib/theme-chalk/icon.css'; //element-ui 图标库
+
+Vue.use(iconPicker, {FontAwesome: true, ElementUI: true, eIcon: true, eIconSymbol: true});
 process.env.ENV == 'production' &&
 	Sentry.init({
 		dsn: 'https://912d97ea26704c828aff071141a4ca50@o408607.ingest.sentry.io/5299000',
@@ -29,8 +40,14 @@ process.env.ENV == 'production' &&
 	})
 
 
+  Vue.use(Element, {
+	size: 'mini' // set element-ui default size
+	//locale: enLang // 如果使用中文，无需设置，请删除
+})
+
 import * as filters from './filters' // global filters
 
+//引入图标库
 
 Vue.prototype.base_host = process.env.VUE_APP_HOST + process.env.VUE_APP_BASE_API ? process.env.VUE_APP_BASE_API : 'api'
 Vue.prototype.host = process.env.VUE_APP_HOST
@@ -58,6 +75,7 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
 
 Vue.config.productionTip = false
 
