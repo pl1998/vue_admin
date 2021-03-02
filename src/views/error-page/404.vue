@@ -13,8 +13,8 @@
           <a style="color:#20a0ff" href="https://wallstreetcn.com" target="_blank">wallstreetcn</a>
         </div>
         <div class="bullshit__headline">{{ message }}</div>
-        <div class="bullshit__info">Please check that the URL you entered is correct, or click the button below to return to the homepage.</div>
-        <a href="" class="bullshit__return-home">Back to home</a>
+        <div class="bullshit__info">请检查您输入的网址是否正确，或者点击下面的按钮返回主页.</div>
+        <a href="" class="bullshit__return-home">返回</a>
       </div>
     </div>
   </div>

@@ -84,5 +84,20 @@ export function updateUser(data){
   })
 }
 
+export function getLogList(data) {
+  return request({
+    url: '/admin/log',
+    method: 'get',
+    params:data
+  })
+}
+
+export function delLog(id) {
+  return request({
+    url: '/admin/log/'+id,
+    method: 'delete'
+  })
+}
+
 
 

@@ -167,6 +167,7 @@ export default {
     async add(){
       this.title = '新增权限节点'
       this.form = this.$options.data().form;
+      this.form.is_menu=false
       await this.setFormPermissionTree();
       this.dialogVisible = true;
     },

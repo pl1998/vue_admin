@@ -159,6 +159,7 @@ export default {
 
     },
     async edit(item) {
+      console.log(item.node)
       this.form = Object.assign(this.form, {
         name: item.name,
         description: item.description,
@@ -220,7 +221,7 @@ export default {
       }
     },
     submit(){
-      console.log(this.form.id)
+
        if(this.form.id!=undefined) {
         updateRole(this.form).then((response)=>{
         this.$message.success("success")
@@ -237,7 +238,7 @@ export default {
     },
 
     getCheckedNodes() {
-      console.log(this.$refs.tree.getCheckedNodes());
+      this.$refs.tree.getCheckedNodes()
     },
     getCheckedKeys() {
       return this.$refs.tree.getCheckedKeys();
