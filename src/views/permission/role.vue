@@ -15,7 +15,7 @@
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         row-key="id"
       >
-        <el-table-column prop="name" label="角色名称"></el-table-column>
+        <el-table-column prop="name"  label="角色名称"></el-table-column>
         <el-table-column prop="status" label="权限状态" >
           <template slot-scope="{row}">
            <el-tag v-if="row.status == 1">正常</el-tag>

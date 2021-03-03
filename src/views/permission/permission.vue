@@ -9,7 +9,14 @@
     </div>
      <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id">
-        <el-table-column prop="name" label="权限名称"></el-table-column>
+
+        <el-table-column prop="name" label="权限名称">
+          <template slot-scope="{row}">
+              <i v-if="row.is_menu==1" class="fa fa-reorder"></i>
+                <i v-else class="fa fa-paper-plane"> </i>
+                   <span>  {{ row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="权限状态">
           <template slot-scope="{row}">
             <el-tag v-if="row.status == 1">正常</el-tag>
@@ -19,8 +26,7 @@
         <el-table-column prop="url" label="url">
           <template slot-scope="{row}">
             <el-tag>
-              <span v-if="row.p_id != 0">{{ row.path }}</span>
-              <span v-else>-</span>
+              <span>{{ row.url }}</span>
             </el-tag>
           </template>
         </el-table-column>
