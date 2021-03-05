@@ -88,20 +88,6 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-	// 	path: '/permission',
-	// 	component: Permission,
-	// },
-	// {
-	// 	path: '/role',
-	// 	component: PermissionRole
-	// },
-	// {
-	// 	path: '/user',
-	// 	component: PermissionAdmin
-	// }
-
-
 ]
 export const otherRouter = [ { path: '*', redirect: '/404', hidden: true } ]
 /**

@@ -129,7 +129,7 @@ const mutations = {
 function filterNotFoundRouter(menus) {
 
   let routers = filterAsyncRoutes(menus)
-  console.log(routers)
+
   let newRouters = []
   routers.forEach(route => {
       try {
