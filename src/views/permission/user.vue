@@ -68,12 +68,12 @@
           <el-input v-model="form.password_confirmation" type="password"></el-input>
         </el-form-item>
         <el-form-item label="赋予角色" prop="roles[]">
-              <el-select v-model="form.roles" multiple filterable allow-create default-first-option  placeholder="请选择角色">
+              <el-select v-model="form.roles" multiple filterable allow-create default-first-option  placeholder="请选择角色" value-key="name">
                 <el-option
                  v-for="item in allRole"
                  :key="item.id"
                  :label="item.name"
-                 :value="item.id">
+                 :value="item">
                  </el-option>
               </el-select>
     </el-form-item>
