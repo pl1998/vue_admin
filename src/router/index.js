@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 import {AuthRouteMap,SafeRouteMap} from './routerMap.js'
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -70,11 +70,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
-  },
-  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
@@ -87,7 +82,7 @@ export const constantRoutes = [
         roles: ['admin', 'editor','users']
       }
     ]
-  },
+  }
 ]
 export const otherRouter = [ { path: '*', redirect: '/404', hidden: true } ]
 /**

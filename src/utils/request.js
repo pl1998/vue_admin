@@ -55,8 +55,12 @@ service.interceptors.response.use(
         type: 'warning',
         duration: 5 * 1000
       })
-    }else{
-
+    }else if(res.code==500){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
     }
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {

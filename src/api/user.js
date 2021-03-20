@@ -8,6 +8,18 @@ export function login(data) {
   })
 }
 
+/**
+ * 更新用户信息
+ * @param {*} data
+ */
+export function updateMe(data) {
+  return request({
+    url: '/auth/update',
+    method: 'put',
+    data:data
+  })
+}
+
 export function getInfo() {
   return request({
     url: 'auth/me',

@@ -11,6 +11,7 @@ export function addUser(data) {
     data:data
   })
 }
+
 /**
  * 获取权限列表
  */
