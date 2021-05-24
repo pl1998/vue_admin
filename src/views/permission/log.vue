@@ -10,7 +10,18 @@
      <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%"  row-key="id">
 
-        <el-table-column prop="url" label="url">
+     <el-table-column prop="name" label="name">
+          <template slot-scope="{row}">
+          <el-tag>{{row.name}}</el-tag>
+          </template>
+        </el-table-column>
+         <el-table-column prop="address" label="address">
+          <template slot-scope="{row}">
+          {{row.address}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="url" label="路由">
           <template slot-scope="{row}">
           <el-tag>{{row.url}}</el-tag>
           </template>
