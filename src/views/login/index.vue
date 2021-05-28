@@ -119,13 +119,16 @@ export default {
 
     //validateCaptcha
      const validateCaptcha = (rule, value, callback) => {
-
-
-      if (value.length != 5) {
+      if (!value) {
+        callback(new Error("请输入验证码"));
+      } else {
+        if (value.length != 5) {
         callback(new Error("验证码应该是5位数"));
       } else {
         callback();
       }
+      }
+
     };
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
