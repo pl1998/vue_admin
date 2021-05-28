@@ -249,7 +249,7 @@ export default {
               this.loading = false;
             })
             .catch((error) => {
-              if(error==='Error: 验证码错误'){
+              if(error=='Error: 验证码错误'){
                 this.getCaptcha()
               }
               this.loading = false;
