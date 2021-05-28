@@ -36,6 +36,7 @@
     "jszip": "3.2.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "particles.js": "^2.0.0",
     "path-to-regexp": "2.4.0",
     "screenfull": "4.2.0",
     "script-loader": "0.7.2",

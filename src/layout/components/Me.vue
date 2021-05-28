@@ -5,11 +5,11 @@
     @close="$emit('update:show', false)"
     :visible.sync="visible"
   >
-    <el-form ref="editForm" :model="form" label-width="100px">
+    <el-form ref="form" :rules="rules" :model="form"  label-width="100px">
       <el-form-item label="用户名称: " :required="true" prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="头像: " :required="true" prop="email">
+      <el-form-item label="头像: " :required="true" prop="avatar">
         <el-upload
           v-model="form.avatar"
           action="http://adminapi.test/api/upload_img"
@@ -22,11 +22,11 @@
         </el-upload>
       </el-form-item>
 
-      <el-form-item label="密码: " prop="old_password" :required="true">
-        <el-input v-model="form.old_password" type="password"></el-input>
-      </el-form-item>
-      <el-form-item label="新密码: " prop="password" :required="true">
+      <el-form-item label="密码: " prop="password" :required="true">
         <el-input v-model="form.password" type="password"></el-input>
+      </el-form-item>
+      <el-form-item label="新密码: " prop="new_password" :required="true">
+        <el-input v-model="form.new_password" type="password"></el-input>
       </el-form-item>
       <el-form-item label="确认密码: " prop="password" :required="true">
         <el-input
@@ -35,24 +35,27 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="submit()" class="btn btn-success">提交</el-button>
+        <el-button @click="submit('form')" class="btn btn-success"
+          >提交</el-button
+        >
       </el-form-item>
     </el-form>
   </el-dialog>
 </template>
 <script>
-import store from '@/store';
+import store from "@/store";
 import { mapGetters } from "vuex";
+
 export default {
   name: "Me",
   watch: {
     show() {
       this.visible = this.show;
-      this.initForm()
+      this.initForm();
       //this.visible = !this.visible //取反
     },
   },
-   computed: {
+  computed: {
     ...mapGetters(["sidebar", "avatar", "device", "name"]),
   },
   props: {
@@ -64,6 +67,51 @@ export default {
     },
   },
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("旧密码不能为空"));
+      }
+      setTimeout(() => {
+        if (value.length < 6) {
+          callback(new Error("旧密码不能低于6位"));
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
+
+    var validateName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("昵称不能为空"));
+      }
+      setTimeout(() => {
+        if (value.length < 2) {
+          callback(new Error("昵称不能低于2位"));
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
+
+    var validatePassNew = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("新密码不能为空"));
+      }
+      setTimeout(() => {
+        if (value.length < 6) {
+          callback(new Error("新密码不能低于6位"));
+        } else {
+          callback();
+        }
+      }, 1000);
+    };
+
+    var validatePassCon = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("重复密码不一致"));
+      }
+    };
+
     return {
       visible: this.show,
       formLabelWidth: "120px",
@@ -71,54 +119,70 @@ export default {
       dialogVisible: false,
       form: {
         name: undefined,
-        old_password: undefined,
-        password_confirmation: undefined,
         password: undefined,
+        new_password: undefined,
+        password_confirmation: undefined,
         avatar: undefined,
-      }
+      },
+      rules: {
+        password: [{ validator: validatePass, trigger: "blur" }],
+        name: [{ validator: validateName, trigger: "blur" }],
+        new_password: [{ validator: validatePassNew, trigger: "blur" }],
+        password_confirmation: [
+          { validator: validatePassCon, trigger: "blur" },
+        ],
+      },
     };
   },
 
   methods: {
-    initForm(){
+    initForm() {
       this.form = Object.assign(this.form, {
         name: this.name,
-        avatar:this.avatar
+        avatar: this.avatar,
       });
-      this.imageUrl = true
-      console.log(this.avatar)
+      this.imageUrl = true;
+      console.log(this.avatar);
     },
     open(form) {
       this.$refs[form].resetFields();
       this.show = false;
     },
-    submit() {
-       this.$store.dispatch('user/updateMes', this.form)
-         .then(() => {
-              this.show = false
+    submit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$store
+            .dispatch("user/updateMes", this.form)
+            .then(() => {
+              this.$message({ message: "密码更新成功", type: "success" });
+              this.show = false;
             })
-         .catch(() => {
-             this.$message({message: '更新失败',type: 'error' })
-        })
+            .catch(() => {
+              this.$message({ message: "更新失败", type: "error" });
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
-   handleAvatarSuccess(res, file) {
-     console.log(res,file)
-        this.imageUrl = URL.createObjectURL(file.raw);
-        this.form.avatar = res.data.url
-      },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+    handleAvatarSuccess(res, file) {
+      console.log(res, file);
+      this.imageUrl = URL.createObjectURL(file.raw);
+      this.form.avatar = res.data.url;
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
-        }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-        }
-        return isJPG && isLt2M;
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
       }
-
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
   },
 };
 </script>

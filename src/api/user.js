@@ -7,7 +7,6 @@ export function login(data) {
     data
   })
 }
-
 /**
  * 更新用户信息
  * @param {*} data
@@ -30,6 +29,14 @@ export function getInfo() {
 export function logout() {
   return request({
     url: '/auth/logout',
+    method: 'post'
+  })
+}
+
+
+export function getCaptcha() {
+  return request({
+    url: '/captcha',
     method: 'post'
   })
 }

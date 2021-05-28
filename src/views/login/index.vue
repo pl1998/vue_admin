@@ -19,7 +19,7 @@
         <el-input
           ref="email"
           v-model="loginForm.email"
-          placeholder="Email"
+          placeholder="邮箱"
           name="email"
           type="text"
           tabindex="1"
@@ -42,7 +42,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -58,6 +58,30 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-row>
+        <el-col :span="15">
+          <el-form-item prop="captcha">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <el-input
+              ref="captcha"
+              v-model="loginForm.captcha"
+              placeholder="验证码"
+              name="captcha"
+              type="text"
+              maxlength="5"
+              tabindex="1"
+              autocomplete="on"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="2" style="color:#2d3a4b">2222</el-col>
+          <el-col :span="6">
+            <img class="captcha_img" @click="getCaptcha" :src="captcha_img" />
+          </el-col>
+        </el-col>
+      </el-row>
       <el-button
         :loading="loading"
         type="primary"
@@ -65,9 +89,7 @@
         @click.native.prevent="handleLogin"
         >Login</el-button
       >
-      <div style="position: relative">
-
-      </div>
+      <div style="position: relative"></div>
     </el-form>
 
     <el-dialog title="Or connect with" :visible.sync="showDialog">
@@ -84,21 +106,37 @@
 <script>
 import { validUsername } from "@/utils/validate";
 import SocialSign from "./components/SocialSignin";
+import particles from "particles.js";
+import particlesConfig from "@/../particles";
+import request from "@/utils/request";
+import Axios from "axios";
+import { config } from '@vue/test-utils';
 
 export default {
   name: "Login",
   components: { SocialSign },
   data() {
+
+    //validateCaptcha
+     const validateCaptcha = (rule, value, callback) => {
+
+
+      if (value.length != 5) {
+        callback(new Error("验证码应该是5位数"));
+      } else {
+        callback();
+      }
+    };
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user email"));
+        callback(new Error("请输入邮箱"));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error("密码长度不能低于6位"));
       } else {
         callback();
       }
@@ -107,13 +145,22 @@ export default {
       loginForm: {
         email: undefined,
         password: undefined,
+        key: undefined,
+        captcha: undefined,
       },
+      captcha_img: undefined,
       loginRules: {
         email: [
           { required: true, trigger: "blur", validator: validateUsername },
         ],
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
+        ],
+         key: [
+          { required: true },
+        ],
+         captcha: [
+          { required: true,trigger: "blur", validator: validateCaptcha },
         ],
       },
       passwordType: "password",
@@ -137,19 +184,43 @@ export default {
     },
   },
   created() {
+    this.getCaptcha();
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
+    // this.init();
     if (this.loginForm.email === "") {
       this.$refs.email.focus();
     } else if (this.loginForm.password === "") {
       this.$refs.password.focus();
+    }else if (this.loginForm.key === "") {
+      this.$refs.key.focus();
+    }
+    else if (this.loginForm.captcha === "") {
+      this.$refs.captcha.focus();
     }
   },
   destroyed() {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    getCaptcha() {
+      request({
+        url: "/captcha",
+        method: "post",
+        data: {
+          captcha: "123456",
+        },
+      }).then((response) => {
+        const { captcha } = response.data;
+        this.loginForm.key = captcha.key;
+        this.captcha_img = captcha.img;
+
+      });
+    },
+    init() {
+      particlesJS("particles-js", particlesConfig);
+    },
     checkCapslock(e) {
       const { key } = e;
       this.capsTooltip = key && key.length === 1 && key >= "A" && key <= "Z";
@@ -177,11 +248,13 @@ export default {
               });
               this.loading = false;
             })
-            .catch(() => {
+            .catch((error) => {
+              if(error==='Error: 验证码错误'){
+                this.getCaptcha()
+              }
               this.loading = false;
             });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -219,24 +292,23 @@ export default {
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;
-
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
     color: $cursor;
   }
 }
-
 /* reset element-ui css */
 .login-container {
+  .captcha_img{
+border: 1px solid rgba(255, 255, 255, 0.1);
+  }
   .el-input {
     display: inline-block;
     height: 47px;
     width: 85%;
-
     input {
       background: transparent;
       border: 0px;
@@ -246,14 +318,12 @@ $cursor: #fff;
       color: $light_gray;
       height: 47px;
       caret-color: $cursor;
-
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
     }
   }
-
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.1);
@@ -267,13 +337,11 @@ $cursor: #fff;
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
-
 .login-container {
   min-height: 100%;
   width: 100%;
   background-color: $bg;
   overflow: hidden;
-
   .login-form {
     position: relative;
     width: 520px;
@@ -282,19 +350,16 @@ $light_gray: #eee;
     margin: 0 auto;
     overflow: hidden;
   }
-
   .tips {
     font-size: 14px;
     color: #fff;
     margin-bottom: 10px;
-
     span {
       &:first-of-type {
         margin-right: 16px;
       }
     }
   }
-
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
@@ -302,10 +367,8 @@ $light_gray: #eee;
     width: 30px;
     display: inline-block;
   }
-
   .title-container {
     position: relative;
-
     .title {
       font-size: 26px;
       color: $light_gray;
@@ -314,7 +377,6 @@ $light_gray: #eee;
       font-weight: bold;
     }
   }
-
   .show-pwd {
     position: absolute;
     right: 10px;
@@ -324,13 +386,11 @@ $light_gray: #eee;
     cursor: pointer;
     user-select: none;
   }
-
   .thirdparty-button {
     position: absolute;
     right: 0;
     bottom: 6px;
   }
-
   @media only screen and (max-width: 470px) {
     .thirdparty-button {
       display: none;

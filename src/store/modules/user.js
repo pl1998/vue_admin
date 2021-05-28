@@ -35,9 +35,9 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { email, password } = userInfo
+    const { email, password,captcha,key } = userInfo
     return new Promise((resolve, reject) => {
-      login({ email: email.trim(), password: password }).then(response => {
+      login({ email: email.trim(), password: password ,key:key,captcha:captcha}).then(response => {
         commit('SET_TOKEN', response.access_token)
         setToken(response.access_token)
         resolve()
@@ -118,6 +118,17 @@ const actions = {
       commit('SET_ROLES', [])
       removeToken()
       resolve()
+    })
+  },
+
+  async getCaptcha({ commit, dispatch }, role) {
+
+    return new Promise((resolve, reject) => {
+      getCaptcha(state.token).then(() => {
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 

@@ -56,6 +56,7 @@ const Log = () => import('@/views/permission/log') // 系统日志
 
 
 
+
 export const AuthRouteMap = [
 	{
 		path: '/permission',
@@ -72,5 +73,13 @@ export const AuthRouteMap = [
   {
 		path: '/log',
 		component: Log
-	}
+  },
+  {
+    path:'/z-test',
+    component: Log
+  },
+  {
+    path:'/z-test1',
+    component: Log
+  }
 ]

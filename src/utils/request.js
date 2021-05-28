@@ -62,6 +62,46 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
     }
+    else if(res.code==40001){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+
+    else if(res.code==10004){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+
+
+    else if(res.code==10006){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+
+    else if(res.code==10005){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+
+    else if(res.code==500){
+      Message({
+        message: res.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;

@@ -53,6 +53,8 @@ Vue.prototype.base_host = process.env.VUE_APP_HOST + process.env.VUE_APP_BASE_AP
 Vue.prototype.host = process.env.VUE_APP_HOST
 Vue.prototype.$message = Message
 
+
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
