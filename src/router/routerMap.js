@@ -53,6 +53,7 @@ const PermissionAdmin = () => import('@/views/permission/user') // 用户管理
 const PermissionRole = () => import('@/views/permission/role') // 角色管理
 const Permission = () => import('@/views/permission/permission') // 权限管理
 const Log = () => import('@/views/permission/log') // 系统日志
+const System = () => import('@/views/permission/system') // 系统信息
 
 
 
@@ -75,11 +76,7 @@ export const AuthRouteMap = [
 		component: Log
   },
   {
-    path:'/z-test',
-    component: Log
-  },
-  {
-    path:'/z-test1',
-    component: Log
+    path:'/system',
+    component: System
   }
 ]

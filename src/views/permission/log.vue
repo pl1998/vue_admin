@@ -56,7 +56,7 @@
 
 <script>
 import layoutMinix from "../../layout/components/mixins/layout";
-import {getLogList,delLog} from "../../api/auth"
+import {getLogList,delLog} from "@/api/auth"
 import Pagination from "@/components/Pagination/index";
 export default {
   name: 'Log',
@@ -132,6 +132,7 @@ export default {
     }
   },
   mounted(){
+
     this.getList()
   }
 }

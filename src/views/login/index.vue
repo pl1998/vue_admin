@@ -186,6 +186,7 @@ export default {
       immediate: true,
     },
   },
+
   created() {
     this.getCaptcha();
     // window.addEventListener('storage', this.afterQRScan)
