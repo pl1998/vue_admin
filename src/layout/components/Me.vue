@@ -12,7 +12,8 @@
       <el-form-item label="头像: " :required="true" prop="avatar">
         <el-upload
           v-model="form.avatar"
-          action="http://adminapi.test/api/upload_img"
+          :action="url"
+
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -117,6 +118,7 @@ export default {
       formLabelWidth: "120px",
       imageUrl: "",
       dialogVisible: false,
+      url:'http://adminapi.test/api/upload_img',
       form: {
         name: undefined,
         password: undefined,
@@ -134,6 +136,7 @@ export default {
       },
     };
   },
+
 
   methods: {
     initForm() {
