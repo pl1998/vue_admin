@@ -7,25 +7,28 @@
         class="hamburger-container"
         @toggleClick="toggleSideBar"
       />
-
       <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
       <div class="right-menu">
         <template v-if="device !== 'mobile'">
-          <!-- <search id="header-search" class="right-menu-item" /> -->
+          <search id="header-search" class="right-menu-item" />
           <error-log class="errLog-container right-menu-item hover-effect" />
           <screenfull id="screenfull" class="right-menu-item hover-effect" />
-          <!-- <el-tooltip content="Global Size" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip> -->
         </template>
+
+        <div class="right-menu-item ">
+           <span class="float:left;" style="font-size: 10px">
+            <a @click="bindDing('dingidng')">绑定钉钉 </a></span
+          >
+        </div>
+
         <div class="right-menu-item hover-effect">
-          <span class="float:left;">{{ name }}</span>
+
+          <span class="float:left;" style="font-size: 10px">{{ name }} </span>
           <i
             class="fa fa-circle text-success"
             style="font-size: 3px; color: #13e26f"
           ></i
-          ><span style="font-size: 3px">在线</span>
+          ><span style="font-size: 3px"> 在线</span>
         </div>
         <el-dropdown
           class="avatar-container right-menu-item hover-effect"
@@ -38,10 +41,6 @@
             />
             <i class="el-icon-caret-bottom" />
           </div>
-          <!-- <el-dropdown-menu slot="dropdown">
-            <router-link to="/me/index">
-            <el-dropdown-item><i class="fa fa-user "></i>个人设置</el-dropdown-item>
-          </router-link> -->
           <el-dropdown-menu slot="dropdown">
             <a href="#" @click="me">
               <el-dropdown-item
@@ -57,11 +56,12 @@
         </el-dropdown>
       </div>
     </div>
-    <Me  :show.sync="show"></Me>
+    <Me :show.sync="show"></Me>
   </div>
 </template>
 
 <script>
+import openWindow from "@/utils/open-window";
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       show: false,
-      Refresh:false
+      Refresh: false,
     };
   },
   components: {
@@ -91,6 +91,10 @@ export default {
     ...mapGetters(["sidebar", "avatar", "device", "name"]),
   },
   methods: {
+    bindDing(thirdpart) {
+      let url = process.env.VUE_APP_HOST + "/auth/bindQrcode";
+      openWindow(url, thirdpart, 540, 540);
+    },
     handleClose(done) {
       this.$confirm("确认关闭？")
         .then((_) => {
@@ -106,7 +110,7 @@ export default {
       this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
     me() {
-      this.show=true
+      this.show = true;
       // this.Refresh = true
       // this.$nextTick(() => {
       //   this.show = true;

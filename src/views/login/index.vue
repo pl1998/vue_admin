@@ -57,7 +57,6 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
       <el-row>
         <el-col :span="15">
           <el-form-item prop="captcha">
@@ -82,6 +81,10 @@
           </el-col>
         </el-col>
       </el-row>
+ <br />
+ <el-button type="primary" @click="dingding">第三方登录</el-button>
+ <br />
+  <br />
       <el-button
         :loading="loading"
         type="primary"
@@ -92,12 +95,7 @@
       <div style="position: relative"></div>
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business
-      simulation! ! !
-      <br />
-      <br />
-      <br />
+    <el-dialog title="第三方登录" :visible.sync="showDialog">
       <social-sign />
     </el-dialog>
   </div>
@@ -106,11 +104,8 @@
 <script>
 import { validUsername } from "@/utils/validate";
 import SocialSign from "./components/SocialSignin";
-import particles from "particles.js";
 import particlesConfig from "@/../particles";
 import request from "@/utils/request";
-import Axios from "axios";
-import { config } from '@vue/test-utils';
 
 export default {
   name: "Login",
@@ -189,7 +184,7 @@ export default {
 
   created() {
     this.getCaptcha();
-    // window.addEventListener('storage', this.afterQRScan)
+    window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
     // this.init();
@@ -205,7 +200,7 @@ export default {
     }
   },
   destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
+    window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     getCaptcha() {
@@ -221,6 +216,10 @@ export default {
         this.captcha_img = captcha.img;
 
       });
+    },
+    dingding()
+    {
+      this.showDialog = true
     },
     init() {
       particlesJS("particles-js", particlesConfig);
@@ -271,24 +270,24 @@ export default {
         return acc;
       }, {});
     },
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
+    afterQRScan() {
+      if (e.key === 'x-admin-oauth-code') {
+        const code = getQueryObject(e.newValue)
+        const codeMap = {
+          wechat: 'code',
+          tencent: 'code'
+        }
+        const type = codeMap[this.auth_type]
+        const codeName = code[type]
+        if (codeName) {
+          this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
+            this.$router.push({ path: this.redirect || '/' })
+          })
+        } else {
+          alert('第三方登录失败')
+        }
+      }
+    }
   },
 };
 </script>

@@ -5,7 +5,6 @@
         <svg-icon icon-class="bug" />
       </el-button>
     </el-badge>
-
     <el-dialog :visible.sync="dialogTableVisible" width="80%" append-to-body>
       <div slot="title">
         <span style="padding-right: 10px;">Error Log</span>
