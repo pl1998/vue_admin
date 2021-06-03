@@ -147,7 +147,7 @@ export default {
         avatar: this.avatar,
       });
       this.imageUrl = true;
-      console.log(this.avatar);
+
     },
     open(form) {
       this.$refs[form].resetFields();

@@ -46,7 +46,10 @@ const actions = {
       })
     })
   },
-
+  weiboLogin({ commit }, token) {
+    commit('SET_TOKEN', token)
+    setToken(token)
+  },
   updateMes({commit, state},data){
     return new Promise((resolve, reject) => {
       updateMe(data).then(response => {
@@ -63,7 +66,6 @@ const actions = {
       })
     })
   },
-
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -72,9 +74,7 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-
         const { roles, name, avatar, introduction,menu } = data
-
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')

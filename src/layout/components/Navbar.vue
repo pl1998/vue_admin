@@ -15,14 +15,13 @@
           <screenfull id="screenfull" class="right-menu-item hover-effect" />
         </template>
 
-        <div class="right-menu-item ">
-           <span class="float:left;" style="font-size: 10px">
+        <div class="right-menu-item">
+          <span class="float:left;" style="font-size: 10px">
             <a @click="bindDing('dingidng')">绑定钉钉 </a></span
           >
         </div>
 
         <div class="right-menu-item hover-effect">
-
           <span class="float:left;" style="font-size: 10px">{{ name }} </span>
           <i
             class="fa fa-circle text-success"
@@ -61,7 +60,7 @@
 </template>
 
 <script>
-import openWindow from "@/utils/open-window";
+
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
@@ -93,7 +92,7 @@ export default {
   methods: {
     bindDing(thirdpart) {
       let url = process.env.VUE_APP_HOST + "/auth/bindQrcode";
-      openWindow(url, thirdpart, 540, 540);
+
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -105,6 +104,8 @@ export default {
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
+
+
     async logout() {
       await this.$store.dispatch("user/logout");
       this.$router.push(`/login?redirect=${this.$route.fullPath}`);

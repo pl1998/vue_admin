@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-
       <!-- 搜索 -->
     <div class="filter-container">
      <el-form :model="filter" :inline="true">
@@ -21,11 +20,15 @@
          </el-form-item>
       </el-form>
     </div>
-
-
     <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" row-key="id">
         <el-table-column prop="name" label="用户名"></el-table-column>
+      <el-table-column width="80px" prop="avatar" label="头像">
+          <template slot-scope="{row}">
+           <img class="user-avatar" :src=row.avatar>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="email" label="邮箱">
           <template slot-scope="{row}">
             <span>{{row.email}}</span>
@@ -58,6 +61,7 @@
         <el-form-item label="用户名称: " :required="true" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
+
         <el-form-item label="用户邮箱: " :required="true" prop="email">
           <el-input v-model="form.email"></el-input>
         </el-form-item>
@@ -83,7 +87,6 @@
       </el-form>
  </el-dialog>
      <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :pageSize.sync="listQuery.pageSize"  @pagination="getList" />
-
   </div>
 </template>
 <script>
@@ -204,4 +207,9 @@ export default {
   },
 };
 </script>
-<style lang="stylus" scoped></style>
+<style lang="scss">
+.user-avatar{
+  height: 40px;
+  width: 40px;
+}
+</style>
