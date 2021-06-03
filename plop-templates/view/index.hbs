@@ -1,22 +1,100 @@
 {{#if template}}
-<template>
-  <div />
-</template>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-form>
+        <el-form-item>
+          <el-button
+            type="primary"
+            @click="search"
+            icon="el-icon-search"
+          ></el-button>
+          <el-button
+            type="success"
+            @click="add"
+            icon="el-icon-plus"
+          ></el-button>
+          <el-button
+            type="dange"
+            @click="resetForm"
+            icon="el-icon-refresh"
+          ></el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="content-container" v-loading="listLoading">
+      <el-table
+        :data="list"
+        border
+        style="width: 100%"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        row-key="id"
+      >
+      </el-table>
+    </div>
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="roleForm"
+        :model="form"
+        label-width="100px"
+        v-if="dialogVisible"
+      >
+      </el-form>
+    </el-dialog>
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :pageSize.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
+  </div>
 {{/if}}
-
 {{#if script}}
-<script>
 export default {
-  name: '{{ properCase name }}',
+  name: "Code",
   props: {},
+  components: { Pagination },
+  mixins: [layoutMinix],
   data() {
-    return {}
+    return {
+      list: [],
+      listLoading: false,
+      dialogVisible: false,
+      title: undefined,
+      form: {},
+    };
   },
   created() {},
-  mounted() {},
-  methods: {}
-}
-</script>
+  mounted() {
+    this.getList();
+  },
+  methods: {
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          done();
+        })
+        .catch((_) => {});
+    },
+    getList(params) {},
+    async add() {
+      this.form = this.$options.data().form;
+      this.dialogVisible = true;
+    },
+    async del(item) {},
+    resetForm() {
+      this.filter = [];
+      this.getList();
+    },
+    search() {
+      this.getList();
+    },
+  },
+};
 {{/if}}
 
 {{#if style}}

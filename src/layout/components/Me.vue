@@ -5,7 +5,7 @@
     @close="$emit('update:show', false)"
     :visible.sync="visible"
   >
-    <el-form ref="form" :rules="rules" :model="form"  label-width="100px">
+    <el-form ref="form" :rules="rules" :model="form" label-width="100px">
       <el-form-item label="用户名称: " :required="true" prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
@@ -13,7 +13,7 @@
         <el-upload
           v-model="form.avatar"
           :action="url"
-
+          :headers="headers"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -46,14 +46,13 @@
 <script>
 import store from "@/store";
 import { mapGetters } from "vuex";
-
+import { getToken } from "@/utils/auth";
 export default {
   name: "Me",
   watch: {
     show() {
       this.visible = this.show;
       this.initForm();
-      //this.visible = !this.visible //取反
     },
   },
   computed: {
@@ -114,11 +113,12 @@ export default {
     };
 
     return {
+      headers: undefined,
       visible: this.show,
       formLabelWidth: "120px",
       imageUrl: "",
       dialogVisible: false,
-      url:'http://adminapi.test/api/upload_img',
+      url: "http://adminapi.test/api/upload_img",
       form: {
         name: undefined,
         password: undefined,
@@ -137,8 +137,10 @@ export default {
     };
   },
 
-
   methods: {
+    getHeaders() {
+      this.headers = { Authorization: "Bearer " + getToken() };
+    },
     initForm() {
       this.form = Object.assign(this.form, {
         name: this.name,
@@ -186,6 +188,9 @@ export default {
       }
       return isJPG && isLt2M;
     },
+  },
+  mounted() {
+    this.getHeaders();
   },
 };
 </script>

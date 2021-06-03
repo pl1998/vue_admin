@@ -9,7 +9,6 @@
     </div>
      <div class="content-container" v-loading="listLoading">
       <el-table :data="list" border style="width: 100%" :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="id">
-
         <el-table-column prop="name" label="权限名称">
           <template slot-scope="{row}">
               <i v-if="row.is_menu==1" class="fa fa-reorder"></i>
@@ -164,7 +163,7 @@ export default {
           this.dialogVisible = false;
           this.getList()
       })
-     
+
       }
 
     },
@@ -190,7 +189,7 @@ export default {
         is_menu:item.is_menu
       });
 
-      
+
       this.checkedPermission = item.p_id;
       this.permissionTitle = item.name;
       this.title = "编辑权限 | " + item.name;

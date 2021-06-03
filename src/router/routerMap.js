@@ -54,8 +54,7 @@ const PermissionRole = () => import('@/views/permission/role') // 角色管理
 const Permission = () => import('@/views/permission/permission') // 权限管理
 const Log = () => import('@/views/permission/log') // 系统日志
 const System = () => import('@/views/permission/system') // 系统信息
-const Terminal = () => import('@/views/permission/terminal') // 终端
-
+const Terminal = () => import('@/views/permission/terminal') // 系统终端
 
 
 
