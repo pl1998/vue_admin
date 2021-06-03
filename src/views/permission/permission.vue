@@ -189,6 +189,8 @@ export default {
         hidden: item.hidden.toString(),
         is_menu:item.is_menu
       });
+
+      
       this.checkedPermission = item.p_id;
       this.permissionTitle = item.name;
       this.title = "编辑权限 | " + item.name;
