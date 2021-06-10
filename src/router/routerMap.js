@@ -56,8 +56,6 @@ const Log = () => import('@/views/permission/log') // 系统日志
 const System = () => import('@/views/permission/system') // 系统信息
 const Terminal = () => import('@/views/permission/terminal') // 系统终端
 
-
-
 export const AuthRouteMap = [
 	{
 		path: '/permission',

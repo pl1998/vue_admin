@@ -41,11 +41,15 @@
             <i class="el-icon-caret-bottom" />
           </div>
           <el-dropdown-menu slot="dropdown">
-            <a href="#" @click="me">
+
+          <router-link to="/profile/index">
+            <el-dropdown-item><i class="fa fa-user"></i>个人设置</el-dropdown-item>
+          </router-link>
+            <!-- <a href="#" @click="me">
               <el-dropdown-item
                 ><i class="fa fa-user"></i>个人设置</el-dropdown-item
               >
-            </a>
+            </a> -->
             <el-dropdown-item divided @click.native="logout">
               <span style="display: block"
                 ><i class="fa fa-sign-out"></i> Log Out</span
@@ -60,7 +64,6 @@
 </template>
 
 <script>
-
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
@@ -92,7 +95,6 @@ export default {
   methods: {
     bindDing(thirdpart) {
       let url = process.env.VUE_APP_HOST + "/auth/bindQrcode";
-
     },
     handleClose(done) {
       this.$confirm("确认关闭？")
@@ -104,7 +106,6 @@ export default {
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
-
 
     async logout() {
       await this.$store.dispatch("user/logout");

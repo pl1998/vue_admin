@@ -111,11 +111,13 @@ export default {
      * 删除权限节点
      */
     async del(item) {
+
       this.$confirm("此操作将永久删除权限, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
+
         .then(() => {
           delLog(item.id).then((response) => {
             this.$message({
