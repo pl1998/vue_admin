@@ -117,10 +117,9 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       })
-
         .then(() => {
           delLog(item.id).then((response) => {
-            this.$message({
+            this.$notify({
               type: "success",
               message: "删除成功!",
             });
@@ -128,7 +127,7 @@ export default {
           });
         })
         .catch(() => {
-          this.$message({
+          this.$notify({
             type: "info",
             message: "已取消删除",
           });

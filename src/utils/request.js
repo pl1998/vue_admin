@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox,Notification } from 'element-ui'
+
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -44,26 +45,41 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     if(res.code ==403) {
-      Message({
+
+      Notification({
         message: res.message || '没有权限操作',
         type: 'warning',
         duration: 5 * 1000
       })
     }else if(res.code==400){
-      Message({
+      Notification({
         message: res.message || '请求参数不合格',
         type: 'warning',
         duration: 5 * 1000
       })
     }else if(res.code==500){
-      Message({
+
+      // this.$notify({
+      //   title: 'Errors',
+      //   message: res.message,
+      //   type: 'error',
+      //   duration: 2000
+      // })
+      Notification({
+        title: 'Errors',
         message: res.message,
         type: 'error',
-        duration: 5 * 1000
+        duration: 2000
       })
+
+      // Message({
+      //   message: res.message,
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
     }
     else if(res.code==40001){
-      Message({
+      Notification({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
@@ -71,7 +87,7 @@ service.interceptors.response.use(
     }
 
     else if(res.code==10004){
-      Message({
+      Notification({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
@@ -80,7 +96,7 @@ service.interceptors.response.use(
 
 
     else if(res.code==10006){
-      Message({
+      Notification({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
@@ -88,7 +104,7 @@ service.interceptors.response.use(
     }
 
     else if(res.code==10005){
-      Message({
+      Notification({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
@@ -96,7 +112,7 @@ service.interceptors.response.use(
     }
 
     else if(res.code==500){
-      Message({
+      Notification({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
@@ -107,6 +123,7 @@ service.interceptors.response.use(
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
         // to re-login
+
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
           cancelButtonText: 'Cancel',
@@ -123,7 +140,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    Message({
+    Notification({
       message: error.message,
       type: 'warning',
       duration: 5 * 1000

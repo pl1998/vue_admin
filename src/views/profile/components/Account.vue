@@ -81,15 +81,20 @@ export default {
         old_password: this.form.old_password,
         password_confirmation: this.form.password_confirmation,
       };
+
       this.$store
         .dispatch("user/updateMes", data)
         .then(() => {
-          this.$message({ message: "用户信息更新成功", type: "success" });
+           this.$notify({
+              title: 'Success',
+              message: '用户信息更新成功',
+              type: 'success',
+              duration: 2000
+            })
+
           this.show = false;
         })
-        .catch(() => {
-          this.$message({ message: "更新失败", type: "error" });
-        });
+
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw);

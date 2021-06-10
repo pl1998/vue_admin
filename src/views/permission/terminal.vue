@@ -25,7 +25,7 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { AttachAddon } from "xterm-addon-attach";
 import { getToken } from "@/utils/auth";
-import { Message } from "element-ui";
+import { Message,Notification } from "element-ui";
 
 export default {
   name: "terminal",
@@ -101,7 +101,7 @@ export default {
     },
     socketOnError() {
       this.socket.onerror = () => {
-        Message({
+        Notification({
           message: "SSH客户端链接失败[无权限]",
           type: "error",
           duration: 5 * 1000,
