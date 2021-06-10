@@ -1,14 +1,23 @@
 <template>
   <div class="app-container">
-    <!-- <div class="filter-container">
+    <div class="filter-container">
       <el-form>
         <el-form-item>
-          <el-button type="success" @click="add" icon="el-icon-plus"></el-button>
+          <el-button type="danger" @click="selectDelete" icon="el-icon-delete"
+            >批量删除</el-button
+          >
         </el-form-item>
       </el-form>
-    </div> -->
+    </div>
     <div class="content-container" v-loading="listLoading">
-      <el-table :data="list" border style="width: 100%" row-key="id">
+      <el-table
+        :data="list"
+        border
+        style="width: 100%"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="name" label="name">
           <template slot-scope="{ row }">
             <el-tag>{{ row.name }}</el-tag>
@@ -78,6 +87,7 @@ export default {
       title: undefined,
       beforeClose: true,
       checkedPermission: undefined,
+      multipleSelection: [],
       defaultProps: {
         children: "children",
         label: "name",
@@ -111,7 +121,6 @@ export default {
      * 删除权限节点
      */
     async del(item) {
-
       this.$confirm("此操作将永久删除权限, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -132,6 +141,23 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    selectDelete() {
+      if (this.multipleSelection.length == 0) {
+        this.$notify({
+          type: "warning",
+          message: "请选择需要删除的数据",
+        });
+      } else {
+        var ids=[];
+        for(var i=0;i<this.multipleSelection.length;i++) {
+          ids.push(this.multipleSelection[i]['id'])
+        }
+        this.del({id:ids.join(',')})
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
     },
 
     handleRolesChange() {

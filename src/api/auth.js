@@ -94,10 +94,11 @@ export function getLogList(data) {
 }
 
 export function delLog(id) {
-  
+
   return request({
-    url: '/admin/log/'+id,
-    method: 'delete'
+    url: '/admin/log',
+    method: 'delete',
+    data:{id:id}
   })
 }
 
