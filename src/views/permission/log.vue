@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form>
+      <el-form size="medium">
         <el-form-item>
           <el-button type="danger" @click="selectDelete" icon="el-icon-delete"
-            >批量删除</el-button
+            >删除</el-button
           >
         </el-form-item>
       </el-form>
@@ -16,23 +16,18 @@
         style="width: 100%"
         row-key="id"
         @selection-change="handleSelectionChange"
+        size="medium"
+        :header-cell-class-name="headerStyle"
       >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column prop="name" label="name">
-          <template slot-scope="{ row }">
-            <el-tag>{{ row.name }}</el-tag>
-          </template>
+
         </el-table-column>
         <el-table-column prop="address" label="address">
-          <template slot-scope="{ row }">
-            {{ row.address }}
-          </template>
         </el-table-column>
 
         <el-table-column prop="url" label="路由">
-          <template slot-scope="{ row }">
-            <el-tag>{{ row.url }}</el-tag>
-          </template>
+
         </el-table-column>
 
         <el-table-column prop="method" label="方法">
@@ -41,16 +36,10 @@
           </template>
         </el-table-column>
         <el-table-column prop="ip" label="ip">
-          <template slot-scope="{ row }">
-            <el-tag>{{ row.ip }}</el-tag>
-          </template>
         </el-table-column>
         <el-table-column prop="created_at" label="时间">
-          <template slot-scope="{ row }">
-            <el-tag>{{ row.created_at }}</el-tag>
-          </template>
         </el-table-column>
-        <el-table-column label="操作" width="250px">
+        <el-table-column label="操作" width="250px" fixed="right">
           <template slot-scope="{ row }">
             <el-button
               @click="del(row)"
@@ -120,6 +109,9 @@ export default {
     /**
      * 删除权限节点
      */
+    headerStyle({ row, rowIndex }) {
+      return "table-th";
+    },
     async del(item) {
       this.$confirm("此操作将永久删除权限, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -149,11 +141,11 @@ export default {
           message: "请选择需要删除的数据",
         });
       } else {
-        var ids=[];
-        for(var i=0;i<this.multipleSelection.length;i++) {
-          ids.push(this.multipleSelection[i]['id'])
+        var ids = [];
+        for (var i = 0; i < this.multipleSelection.length; i++) {
+          ids.push(this.multipleSelection[i]["id"]);
         }
-        this.del({id:ids.join(',')})
+        this.del({ id: ids.join(",") });
       }
     },
     handleSelectionChange(val) {

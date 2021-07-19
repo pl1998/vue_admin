@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="content-container" v-loading="listLoading">
       <aside><i class="fa fa-steam"></i> 服务器信息</aside>
-      <el-table :data="list" border style="width: 100%" row-key="id">
+      <el-table :data="list" border style="width: 100%" row-key="id" size="medium">
         <el-table-column prop="name" label="">
           <template slot-scope="{ row }">
           {{ row.name }}
