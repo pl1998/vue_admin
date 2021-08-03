@@ -13,6 +13,7 @@
     </div>
     <div class="content-container" v-loading="listLoading">
       <el-table
+         :cell-style="{ textAlign: 'center' }"
         :data="list"
         border
         style="width: 100%"
@@ -43,7 +44,7 @@
             <span>{{ row.created_at }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250px">
+        <el-table-column label="操作" width="250px" fixed="right">
           <template slot-scope="{ row }">
             <el-button
               @click="edit(row)"

@@ -1,6 +1,7 @@
 import { login, logout, getInfo,updateMe } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import { startState } from 'codemirror'
 
 const state = {
   token: getToken(),
@@ -8,7 +9,8 @@ const state = {
   avatar: '',
   introduction: '',
   roles: [],
-  menu:[]
+  menu:[],
+  email:''
 }
 
 const mutations = {
@@ -29,6 +31,9 @@ const mutations = {
   },
   SET_MENU:(state, menu)=>{
     state.menu = menu
+  },
+  SET_EMAIL:(state,email)=>{
+    state.email=email
   }
 }
 
@@ -74,13 +79,16 @@ const actions = {
         if (!data) {
           reject('Verification failed, please Login again.')
         }
-        const { roles, name, avatar, introduction,menu } = data
+        const { roles, name, avatar,email, introduction,menu } = data
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
+        commit('SET_EMAIL', email)
+
+
         commit('SET_AVATAR', avatar)
         commit('SET_MENU', menu)
         commit('SET_INTRODUCTION', introduction)

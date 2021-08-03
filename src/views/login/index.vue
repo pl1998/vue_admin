@@ -1,6 +1,7 @@
 <template>
   <div class="login-container">
     <el-form
+      size="mini"
       ref="loginForm"
       :model="loginForm"
       :rules="loginRules"
@@ -9,7 +10,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">laravel-casbin-admin</h3>
+        <h3 class="title">{{systemName}}</h3>
       </div>
 
       <el-form-item prop="email">
@@ -75,16 +76,16 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="2" style="color:#2d3a4b">2222</el-col>
-          <el-col :span="6">
+        <el-col :span="1" style="color:#2d3a4b">2222</el-col>
+          <el-col :span="4">
             <img class="captcha_img" @click="getCaptcha" :src="captcha_img" />
           </el-col>
         </el-col>
       </el-row>
  <br />
- <el-button type="primary" @click="dingding">第三方登录</el-button>
- <br />
-  <br />
+ <!-- <el-button type="primary" @click="dingding">第三方登录</el-button> -->
+
+
       <el-button
         :loading="loading"
         type="primary"
@@ -169,8 +170,8 @@ export default {
       if (!value) {
         callback(new Error("请输入验证码"));
       } else {
-        if (value.length != 5) {
-          callback(new Error("验证码应该是5位数"));
+        if (value.length != 4) {
+          callback(new Error("验证码应该是4位数"));
         } else {
           callback();
         }
@@ -191,6 +192,7 @@ export default {
       }
     };
     return {
+      systemName:process.env.VUE_APP_SYSTEM_NAME,
       loginForm: {
         email: undefined,
         password: undefined,
@@ -314,7 +316,7 @@ export default {
       }
     },
     getindex() {
-       console.log(2)
+
       this.$router.push({
         path: this.redirect || "/",
         query: this.otherQuery,
@@ -333,9 +335,6 @@ export default {
       request({
         url: "/captcha",
         method: "post",
-        data: {
-          captcha: "123456",
-        },
       }).then((response) => {
         const { captcha } = response.data;
         this.loginForm.key = captcha.key;
@@ -504,7 +503,7 @@ $light_gray: #eee;
   overflow: hidden;
   .login-form {
     position: relative;
-    width: 520px;
+    width: 420px;
     max-width: 100%;
     padding: 160px 35px 0;
     margin: 0 auto;

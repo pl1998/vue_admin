@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: process.env.VUE_APP_SYSTEM_NAME,
 
   /**
    * @type {boolean} true | false

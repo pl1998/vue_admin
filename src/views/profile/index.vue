@@ -8,15 +8,16 @@
         <el-col :span="18" :xs="24">
           <el-card>
             <el-tabs v-model="activeTab">
+                <el-tab-pane label="账户信息" name="account">
+                <account :user="user" />
+              </el-tab-pane>
               <el-tab-pane label="工作台" name="activity">
                 <activity />
               </el-tab-pane>
               <el-tab-pane label="更新日志" name="timeline">
                 <timeline />
               </el-tab-pane>
-              <el-tab-pane label="账户信息" name="account">
-                <account :user="user" />
-              </el-tab-pane>
+
             </el-tabs>
           </el-card>
         </el-col>
@@ -39,7 +40,7 @@ export default {
   data() {
     return {
       user: {},
-      activeTab: 'activity'
+      activeTab: 'account'
     }
   },
   computed: {

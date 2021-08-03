@@ -13,6 +13,7 @@
     </div>
     <div class="content-container" v-loading="listLoading">
       <el-table
+         :cell-style="{ textAlign: 'center' }"
         :data="list"
         border
         style="width: 100%"

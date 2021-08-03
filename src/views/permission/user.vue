@@ -32,6 +32,7 @@
     </div>
     <div class="content-container" v-loading="listLoading">
       <el-table
+         :cell-style="{ textAlign: 'center' }"
         :data="list"
         border
         style="width: 100%"
@@ -56,6 +57,7 @@
             <el-tag
               style="margin: 0px 2px 0px 2px"
               v-for="role in row.roles_node"
+              :key="role.id"
             >
               {{ role.name }}
             </el-tag>
@@ -66,7 +68,7 @@
             <span>{{ row.created_at }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="method" width="250px">
+        <el-table-column label="method" width="250px" fixed="right">
           <template slot-scope="{ row }">
             <el-button
               @click="edit(row)"
