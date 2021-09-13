@@ -55,6 +55,7 @@ const Permission = () => import('@/views/permission/permission') // 权限管理
 const Log = () => import('@/views/permission/log') // 系统日志
 const System = () => import('@/views/permission/system') // 系统信息
 const Terminal = () => import('@/views/permission/terminal') // 系统终端
+const ScheduleTask = () => import('@/views/permission/schedule_task') // 计划任务
 
 export const AuthRouteMap = [
 	{
@@ -80,5 +81,10 @@ export const AuthRouteMap = [
   {
     path:'/terminal',
     component: Terminal
-  }
+  },
+  {
+    path:'/schedule_task',
+    component:ScheduleTask
+
+  },
 ]

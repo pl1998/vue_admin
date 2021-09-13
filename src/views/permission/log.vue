@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import layoutMinix from "../../layout/components/mixins/layout";
+import layoutMinix from "@/layout/components/mixins/layout";
 import { getLogList, delLog } from "@/api/auth";
 import Pagination from "@/components/Pagination/index";
 export default {

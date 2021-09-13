@@ -137,10 +137,10 @@
   </div>
 </template>
 <script>
-import layoutMinix from "../../layout/components/mixins/layout";
+import layoutMinix from "@/layout/components/mixins/layout";
 import Pagination from "@/components/Pagination/index";
-import { getUserList, addUser, updateUser } from "../../api/auth";
-import { allRole } from "../../api/role";
+import { getUserList, addUser, updateUser } from "@/api/auth";
+import { allRole } from "@/api/role";
 
 export default {
   name: "UserPermission",
