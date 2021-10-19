@@ -27,7 +27,7 @@
     "dropzone": "5.5.1",
     "e-icon-picker": "^1.0.17",
     "echarts": "4.2.1",
-    "element-ui": "2.13.2",
+    "element-ui": "^2.15.6",
     "file-saver": "2.0.1",
     "font-awesome": "^4.7.0",
     "form-gen-parser": "^1.0.3",

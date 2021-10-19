@@ -83,10 +83,9 @@
         </el-col>
       </el-row>
  <br />
- <el-button type="primary" @click="dingding">第三方登录</el-button>
+ <!-- <el-button type="primary" @click="dingding">第三方登录</el-button> -->
 
- <br />
-  <br />
+
       <el-button
         :loading="loading"
         type="primary"
